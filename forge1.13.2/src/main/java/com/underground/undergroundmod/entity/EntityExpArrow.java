@@ -2,6 +2,7 @@ package com.underground.undergroundmod.entity;
 
 
 import com.underground.undergroundmod.UnderGroundMod;
+import com.underground.undergroundmod.monster.entity.EntitySkyRoamer;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
