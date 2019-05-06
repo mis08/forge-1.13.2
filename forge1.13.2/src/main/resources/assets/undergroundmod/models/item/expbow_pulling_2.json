@@ -1,0 +1,6 @@
+{
+  "parent": "undergroundmod:item/expbow",
+  "textures": {
+    "layer0": "undergroundmod:items/expbow_3"
+  }
+}

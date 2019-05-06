@@ -1,11 +1,16 @@
 package com.underground.undergroundmod;
 
 import net.minecraft.block.Block;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.ToolType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
@@ -17,6 +22,9 @@ import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
+import com.underground.undergroundmod.entity.EntityExpArrow;
+import com.underground.undergroundmod.entity.EntityTippedExpArrow;
+import com.underground.undergroundmod.render.*;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -46,16 +54,24 @@ public class UnderGroundMod
         MinecraftForge.EVENT_BUS.register(this);
     }
     
-    public static Item test;
+       //tab登録
+    public static ItemGroup tabUnder = (new ItemGroup("tabUnder") {
+        @Override
+        public ItemStack createIcon() {
+            return new ItemStack(Items.IRON_PICKAXE);
+        }
+    }); 
     
-    public static void init() {
-        test = new Itemtest(new Item.Properties().group(ItemGroup.COMBAT).defaultMaxDamage(384)).setRegistryName(new ResourceLocation("undergroundmod", "itemtest"));
-    }
- 
-    public static void register() {
-        ForgeRegistries.ITEMS.registerAll(test);
-    }
+    //Entity登録
+    public static EntityType EntityExpArrow;
+    public static EntityType EntityTippedExpArrow;
+    
+    //Item登録
+    public static Item test = new Itemtest(new Item.Properties().group(tabUnder).defaultMaxDamage(384)).setRegistryName(new ResourceLocation("undergroundmod", "itemtest"));
+    public static Item ExpArrow =new Itemtest(new Item.Properties().group(tabUnder).maxStackSize(64)).setRegistryName(new ResourceLocation("undergroundmod", "exparrow"));
+    public static Item ExpBow =new Itemtest(new Item.Properties().group(ItemGroup.COMBAT).defaultMaxDamage(384)).setRegistryName(new ResourceLocation("undergroundmod", "expbow"));
 
+    
     private void setup(final FMLCommonSetupEvent event)
     {
         // some preinit code
@@ -100,8 +116,22 @@ public class UnderGroundMod
         
         @SubscribeEvent
         public static void onItemsRegistry(final RegistryEvent.Register<Item> itemRegister) {
-            UnderGroundMod.init();
-            UnderGroundMod.register();
+        	itemRegister.getRegistry().register(test);
+        	itemRegister.getRegistry().register(ExpArrow);
+        	itemRegister.getRegistry().register(ExpBow);
+        }
+        
+        @SubscribeEvent
+        public static void onEntityTypesRegistry(final RegistryEvent.Register<EntityType<?>> entityRegister) {
+        	
+        	EntityExpArrow = EntityType.Builder.create(EntityExpArrow.class,EntityExpArrow::new).tracker(60, 5, true).build("undergroundmod" + ":entityexparrow");
+        	EntityExpArrow.setRegistryName(new ResourceLocation("undergroundmod", "entityexparrow"));
+        	entityRegister.getRegistry().register(EntityExpArrow);
+        	
+        	EntityTippedExpArrow = EntityType.Builder.create(EntityTippedExpArrow.class,EntityTippedExpArrow::new).tracker(60, 5, true).build("undergroundmod" + ":entitytippedexparrow");
+        	EntityTippedExpArrow.setRegistryName(new ResourceLocation("undergroundmod", "entitytippedexparrow"));
+        	entityRegister.getRegistry().register(EntityTippedExpArrow);
+        	
         }
     }
 }
