@@ -11,10 +11,10 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class RenderExpArrow<T extends EntityExpArrow> extends RenderArrow<T> {
-	private static final ResourceLocation TorchTextures = new ResourceLocation("undergroundmod:textures/entity/entityexparrow.png");
+public class RenderTippedExpArrow<T extends EntityExpArrow> extends RenderArrow<T> {
+	private static final ResourceLocation TorchTextures = new ResourceLocation("undergroundmod:textures/entity/entitytippedexparrow.png");
 
-	public RenderExpArrow(RenderManager renderManagerIn) {
+	public RenderTippedExpArrow(RenderManager renderManagerIn) {
 		super(renderManagerIn);
 	}
 

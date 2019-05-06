@@ -27,7 +27,7 @@ public class ExpBow extends Item{
 		         if (p_210310_2_ == null) {
 		            return 0.0F;
 		         } else {
-		            return !(p_210310_2_.getActiveItemStack().getItem() instanceof ItemBow) ? 0.0F : (float)(p_210310_0_.getUseDuration() - p_210310_2_.getItemInUseCount()) / 20.0F;
+		            return !(p_210310_2_.getActiveItemStack().getItem() instanceof ExpBow) ? 0.0F : (float)(p_210310_0_.getUseDuration() - p_210310_2_.getItemInUseCount()) / 20.0F;
 		         }
 		      });
 		      this.addPropertyOverride(new ResourceLocation("pulling"), (p_210309_0_, p_210309_1_, p_210309_2_) -> {

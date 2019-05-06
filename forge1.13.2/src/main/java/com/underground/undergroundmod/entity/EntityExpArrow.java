@@ -4,29 +4,23 @@ package com.underground.undergroundmod.entity;
 import com.underground.undergroundmod.UnderGroundMod;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.command.impl.data.BlockDataAccessor;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.IProjectile;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.projectile.EntityArrow;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.SPacketChangeGameState;
-import net.minecraft.state.IProperty;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 
-public class EntityExpArrow extends EntityArrow implements IProjectile{
+public class EntityExpArrow extends EntityArrow{
 
 	private int xTile;
 	private int yTile;
@@ -46,24 +40,28 @@ public class EntityExpArrow extends EntityArrow implements IProjectile{
 		this.pickupStatus = PickupStatus.DISALLOWED;
 		this.damage = 2.0D;
 		this.setSize(0.5F, 0.5F);
+		this.worldIn=worldIn;
 	}
 
 	
 	public EntityExpArrow(World worldIn)
     {
         super(UnderGroundMod.EntityExpArrow, worldIn);
+        this.worldIn=worldIn;
        
     }
 
 	public EntityExpArrow(EntityType<?> type, double x, double y, double z, World worldIn) {
         this(worldIn);
         this.setPosition(x, y, z);
+        this.worldIn=worldIn;
     }
 
     public EntityExpArrow(EntityType<?> type, EntityLivingBase shooter, World worldIn)
     {
         this(type, shooter.posX, shooter.posY + (double)shooter.getEyeHeight() - 0.10000000149011612D, shooter.posZ,worldIn);
         this.func_212361_a(shooter);
+        this.worldIn=worldIn;
 
         if (shooter instanceof EntityPlayer)
         {
@@ -95,6 +93,7 @@ public class EntityExpArrow extends EntityArrow implements IProjectile{
 	         this.posZ -= this.motionZ / (double)f;
 	         //this.playSound(this.getHitGroundSound(), 1.0F, 1.2F / (this.rand.nextFloat() * 0.2F + 0.9F));
 	         this.worldIn.createExplosion(this, this.posX, this.posY, this.posZ, 3F, true);
+	         this.remove();
 	         this.inGround = true;
 	         this.arrowShake = 7;
 	         this.setIsCritical(false);

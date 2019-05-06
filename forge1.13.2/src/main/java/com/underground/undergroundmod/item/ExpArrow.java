@@ -1,6 +1,6 @@
 package com.underground.undergroundmod.item;
 
-import com.underground.undergroundmod.entity.EntityExpArrow;
+
 import com.underground.undergroundmod.entity.EntityTippedExpArrow;
 
 import net.minecraft.entity.EntityLivingBase;

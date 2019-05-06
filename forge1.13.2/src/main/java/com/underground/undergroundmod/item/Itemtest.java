@@ -7,6 +7,7 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.Item.Properties;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -19,6 +20,22 @@ public class Itemtest extends Item{
 	public Itemtest(Properties properties) {
 		super(properties);
 		// TODO 自動生成されたコンストラクター・スタブ
+	}
+	
+	@Override
+	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+		// プレイヤーが持っているItemStackは、プレイヤーから取得
+		ItemStack stack = player.getHeldItem(hand);
+
+		// 今回は使用すると自分を回復するアイテムにしてみる
+		player.heal(20.0F); // ハート20個
+
+		// 使用後にアイテムを減らす処理
+		// このメソッドでは、数を減らした後に0個の場合EMPTYに差し替える処理などはなくてOK
+		stack.shrink(1);
+
+		// 結果を返す
+		return new ActionResult(EnumActionResult.SUCCESS, stack);
 	}
 	
 	

@@ -1,4 +1,5 @@
 {
-  "itemGroup.tabExample": "Example",
+  "itemGroup.tabUnder": "UnderGroundMods",
   "item.undergroundmod.exparrow": "ExpArrow"
+  "item.undergroundmod.expbow":"ExpBow"
 }

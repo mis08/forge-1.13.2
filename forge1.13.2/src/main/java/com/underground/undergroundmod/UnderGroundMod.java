@@ -14,6 +14,7 @@ import net.minecraftforge.common.ToolType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -25,6 +26,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import com.underground.undergroundmod.entity.EntityExpArrow;
 import com.underground.undergroundmod.entity.EntityTippedExpArrow;
 import com.underground.undergroundmod.render.*;
+import com.underground.undergroundmod.item.*;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -67,9 +69,9 @@ public class UnderGroundMod
     public static EntityType EntityTippedExpArrow;
     
     //Item登録
-    public static Item test = new Itemtest(new Item.Properties().group(tabUnder).defaultMaxDamage(384)).setRegistryName(new ResourceLocation("undergroundmod", "itemtest"));
-    public static Item ExpArrow =new Itemtest(new Item.Properties().group(tabUnder).maxStackSize(64)).setRegistryName(new ResourceLocation("undergroundmod", "exparrow"));
-    public static Item ExpBow =new Itemtest(new Item.Properties().group(ItemGroup.COMBAT).defaultMaxDamage(384)).setRegistryName(new ResourceLocation("undergroundmod", "expbow"));
+    public static Item test = new Itemtest(new Item.Properties().group(tabUnder).maxStackSize(64)).setRegistryName(new ResourceLocation("undergroundmod", "itemtest"));
+    public static Item ExpArrow =new ExpArrow(new Item.Properties().group(tabUnder).maxStackSize(64)).setRegistryName(new ResourceLocation("undergroundmod", "exparrow"));
+    public static Item ExpBow =new ExpBow(new Item.Properties().group(tabUnder).defaultMaxDamage(384)).setRegistryName(new ResourceLocation("undergroundmod", "expbow"));
 
     
     private void setup(final FMLCommonSetupEvent event)
@@ -82,6 +84,10 @@ public class UnderGroundMod
     private void doClientStuff(final FMLClientSetupEvent event) {
         // do something that can only be done on the client
         LOGGER.info("Got game settings {}", event.getMinecraftSupplier().get().gameSettings);
+        
+        //EntityRender登録
+        RenderingRegistry.registerEntityRenderingHandler(EntityExpArrow.class, RenderExpArrow::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityTippedExpArrow.class, RenderTippedExpArrow::new);
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event)
