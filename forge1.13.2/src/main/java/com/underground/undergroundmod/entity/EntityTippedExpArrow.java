@@ -29,7 +29,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class EntityTippedExpArrow extends EntityExpArrow{
 
-	private static final DataParameter<Integer> COLOR = EntityDataManager.createKey(EntityTippedArrow.class, DataSerializers.VARINT);
+	private static final DataParameter<Integer> COLOR = EntityDataManager.createKey(EntityTippedExpArrow.class, DataSerializers.VARINT);
 	private PotionType potion = PotionTypes.EMPTY;
 	private final Set<PotionEffect> customPotionEffects = Sets.newHashSet();
 	private boolean fixedColor;

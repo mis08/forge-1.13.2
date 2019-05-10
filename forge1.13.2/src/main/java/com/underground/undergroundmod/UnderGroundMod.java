@@ -1,5 +1,8 @@
 package com.underground.undergroundmod;
 
+
+import static com.underground.undergroundmod.ModIdHolder.MODID;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.projectile.EntityTippedArrow;
@@ -30,6 +33,7 @@ import com.underground.undergroundmod.item.*;
 import com.underground.undergroundmod.monster.*;
 import com.underground.undergroundmod.monster.render.RenderSkyRoamer;
 import com.underground.undergroundmod.monster.entity.*;
+import com.underground.undergroundmod.entity.*;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -71,15 +75,16 @@ public class UnderGroundMod
     }); 
     
     //Entity作成
-    public static EntityType EntityExpArrow;
-    public static EntityType EntityTippedExpArrow;
-    public static EntityType EntitySkyRoamer;
+    public static EntityType<?> EntityExpArrow =EntityType.Builder.create(EntityExpArrow.class,EntityExpArrow::new).tracker(60, 5, true).build(MODID+":entityexparrow").setRegistryName(new ResourceLocation( MODID,"entityexparrow"));
+	public static EntityType<?> EntityTippedExpArrow = EntityType.Builder.create(EntityTippedExpArrow.class,EntityTippedExpArrow::new).tracker(60,5,true).build(MODID+":entitytippedexparrow").setRegistryName(new ResourceLocation(MODID,"entitytippedexparrow"));
+	public static EntityType<?> EntitySkyRoamer = EntityType.Builder.create(EntitySkyRoamer.class,EntitySkyRoamer::new).tracker(200, 1, true).build(MODID+":entityskyroamer").setRegistryName(new ResourceLocation(MODID,"entityskyroamer"));
+
     
     //Itemプロパティ作成
-    public static Item test = new Itemtest(new Item.Properties().group(tabUnder).maxStackSize(64)).setRegistryName(new ResourceLocation("undergroundmod", "itemtest"));
-    public static Item ExpArrow =new ExpArrow(new Item.Properties().group(tabUnder).maxStackSize(64)).setRegistryName(new ResourceLocation("undergroundmod", "exparrow"));
-    public static Item ExpBow =new ExpBow(new Item.Properties().group(tabUnder).defaultMaxDamage(384)).setRegistryName(new ResourceLocation("undergroundmod", "expbow"));
-    public static Item SpawnSkyRoamer =new SpawnSkyRoamer(new Item.Properties().group(tabUnder).defaultMaxDamage(384)).setRegistryName(new ResourceLocation("undergroundmod", "spawnskyroamer"));
+    public static Item test = new Itemtest(new Item.Properties().group(tabUnder).maxStackSize(64)).setRegistryName(new ResourceLocation(MODID, "itemtest"));
+    public static Item ExpArrow =new ExpArrow(new Item.Properties().group(tabUnder).maxStackSize(64)).setRegistryName(new ResourceLocation(MODID, "exparrow"));
+    public static Item ExpBow =new ExpBow(new Item.Properties().group(tabUnder).defaultMaxDamage(384)).setRegistryName(new ResourceLocation(MODID, "expbow"));
+    public static Item SpawnSkyRoamer =new SpawnSkyRoamer(new Item.Properties().group(tabUnder).defaultMaxDamage(384)).setRegistryName(new ResourceLocation(MODID, "spawnskyroamer"));
 
     
     
@@ -89,6 +94,12 @@ public class UnderGroundMod
         // some preinit code
         LOGGER.info("HELLO FROM PREINIT");
         LOGGER.info("DIRT BLOCK >> {}", Blocks.DIRT.getRegistryName());
+    	//MobEntity設定
+        AddEntity.registerPlacementTypes();
+        AddEntity.registerEntitySpawns();
+        
+
+
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
@@ -96,10 +107,7 @@ public class UnderGroundMod
         LOGGER.info("Got game settings {}", event.getMinecraftSupplier().get().gameSettings);
         
         //EntityRender登録
-        RenderingRegistry.registerEntityRenderingHandler(EntityExpArrow.class, RenderExpArrow::new);
-        RenderingRegistry.registerEntityRenderingHandler(EntityTippedExpArrow.class, RenderTippedExpArrow::new);
-        RenderingRegistry.registerEntityRenderingHandler(EntitySkyRoamer.class,RenderSkyRoamer::new);
-        
+        AddRender.registerRenders();
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event)
@@ -136,30 +144,27 @@ public class UnderGroundMod
         public static void onItemsRegistry(final RegistryEvent.Register<Item> itemRegister) {
         	//Item登録
         	itemRegister.getRegistry().registerAll(
-        			test,
+        			//test,
         			ExpArrow,
         			ExpBow,
         			SpawnSkyRoamer
         	);
         }
-        
+       
         @SubscribeEvent
         public static void onEntityTypesRegistry(final RegistryEvent.Register<EntityType<?>> entityRegister) {
+        	//Entity登録
+        	entityRegister.getRegistry().registerAll(
+        			EntityExpArrow,
+        			EntityTippedExpArrow,
+        			EntitySkyRoamer
+        			);
         	
-        	EntityExpArrow = EntityType.Builder.create(EntityExpArrow.class,EntityExpArrow::new).tracker(60, 5, true).build("undergroundmod" + ":entityexparrow");
-        	EntityExpArrow.setRegistryName(new ResourceLocation("undergroundmod", "entityexparrow"));
-        	entityRegister.getRegistry().register(EntityExpArrow);
-        	
-        	EntityTippedExpArrow = EntityType.Builder.create(EntityTippedExpArrow.class,EntityTippedExpArrow::new).tracker(60, 5, true).build("undergroundmod" + ":entitytippedexparrow");
-        	EntityTippedExpArrow.setRegistryName(new ResourceLocation("undergroundmod", "entitytippedexparrow"));
-        	entityRegister.getRegistry().register(EntityTippedExpArrow);
-        	
-        	EntitySkyRoamer = EntityType.Builder.create(EntitySkyRoamer.class,EntitySkyRoamer::new).tracker(60, 5, true).build("undergroundmod" + ":entityskyroamer");
-        	EntitySkyRoamer.setRegistryName(new ResourceLocation("undergroundmod", "entityskyroamer"));
-        	entityRegister.getRegistry().register(EntitySkyRoamer);
+
         	
         	
-        }
+        } 
+    
     }
 }
 
