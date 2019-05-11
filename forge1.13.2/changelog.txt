@@ -1,3 +1,14 @@
+Build: 1.13.2-25.0.193 - Thu May 09 06:10:47 GMT 2019
+	tterrag:
+		Add new system for model data, replacing extended states (#5564)
+
+=========
+Build: 1.13.2-25.0.192 - Mon May 06 22:52:28 GMT 2019
+	lex:
+		Bump ForgeSPI version, and add support for DistCleaner stripping
+		interfaces from classes. Add more detail to VersionChecker log info.
+
+=========
 Build: 1.13.2-25.0.191 - Thu Apr 25 23:52:36 GMT 2019
 	tterrag:
 		Add explicit return type checks for extensible enums, fix exc
