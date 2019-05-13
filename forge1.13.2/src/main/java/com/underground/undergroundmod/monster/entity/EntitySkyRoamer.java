@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import com.underground.undergroundmod.entity.AddEntity;
+
 import net.minecraft.entity.CreatureAttribute;
 import net.minecraft.entity.EntityBodyHelper;
 import net.minecraft.entity.EntityFlying;
@@ -47,11 +49,13 @@ public class EntitySkyRoamer extends EntityFlying implements IMob{
 	   private Vec3d field_203036_b = Vec3d.ZERO;
 	   private BlockPos field_203037_c = BlockPos.ORIGIN;
 	   private EntitySkyRoamer.AttackPhase attackPhase = EntitySkyRoamer.AttackPhase.CIRCLE;
+	   
+	   //damage変更
 	   public static final IAttribute ATTACK_DAMAGE = new RangedAttribute((IAttribute)null, "generic.attackDamage", 64.0D, 32.0D, 4096.0D);
 	   
 
 	   public EntitySkyRoamer(World p_i48793_1_) {
-	      super(EntityType.PHANTOM, p_i48793_1_);
+	      super(AddEntity.SKYROAMER, p_i48793_1_);
 	      this.experienceValue = 5;
 	      this.setSize(0.9F, 0.5F);
 	      this.moveHelper = new EntitySkyRoamer.MoveHelper(this);

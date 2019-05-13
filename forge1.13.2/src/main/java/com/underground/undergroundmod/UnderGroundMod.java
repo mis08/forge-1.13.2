@@ -94,6 +94,7 @@ public class UnderGroundMod
         // some preinit code
         LOGGER.info("HELLO FROM PREINIT");
         LOGGER.info("DIRT BLOCK >> {}", Blocks.DIRT.getRegistryName());
+        
     	//MobEntity設定
         AddEntity.registerPlacementTypes();
         AddEntity.registerEntitySpawns();
@@ -160,7 +161,7 @@ public class UnderGroundMod
         			EntitySkyRoamer
         			);
         	
-
+        	AddEntity.entityTypeRegister();
         	
         	
         } 
