@@ -79,7 +79,7 @@ public class AddEntity {
 	
 	public static void registerEntitySpawns() {
 		EntitySpawnPlacementRegistry.SpawnPlacementType ON_GROUND = EntitySpawnPlacementRegistry.SpawnPlacementType.ON_GROUND;
-		registerEntitySpawn((EntityType<? extends EntityLiving>) UnderGroundMod.EntitySkyRoamer,EnumCreatureType.MONSTER,ON_GROUND,AllBiome,100,4,4);
+		registerEntitySpawn((EntityType<? extends EntityLiving>) UnderGroundMod.EntitySkyRoamer,EnumCreatureType.MONSTER,ON_GROUND,AllBiome,50,4,4);
 
 	}
 	

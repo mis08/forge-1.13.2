@@ -4,16 +4,16 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import com.underground.undergroundmod.UnderGroundMod;
 import com.underground.undergroundmod.entity.AddEntity;
+
 
 import net.minecraft.entity.CreatureAttribute;
 import net.minecraft.entity.EntityBodyHelper;
 import net.minecraft.entity.EntityFlying;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.IEntityLivingData;
-import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.EntityAITarget;
 import net.minecraft.entity.ai.EntityLookHelper;
@@ -56,11 +56,14 @@ public class EntitySkyRoamer extends EntityFlying implements IMob{
 
 	   public EntitySkyRoamer(World p_i48793_1_) {
 	      super(AddEntity.SKYROAMER, p_i48793_1_);
-	      this.experienceValue = 5;
+	      this.experienceValue = 10;
 	      this.setSize(0.9F, 0.5F);
 	      this.moveHelper = new EntitySkyRoamer.MoveHelper(this);
 	      this.lookHelper = new EntitySkyRoamer.LookHelper(this);
 	   }
+	   
+	   
+	   
 
 	   protected EntityBodyHelper createBodyHelper() {
 	      return new EntitySkyRoamer.BodyHelper(this);
@@ -137,7 +140,8 @@ public class EntitySkyRoamer extends EntityFlying implements IMob{
 	      }
 
 	      if (!this.world.isRemote && this.world.getDifficulty() == EnumDifficulty.PEACEFUL) {
-	         this.remove();
+	         //this.remove();
+	    	  onDeath(getLastDamageSource());
 	      }
 
 	   }
@@ -146,7 +150,7 @@ public class EntitySkyRoamer extends EntityFlying implements IMob{
 	    * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
 	    * use this to react to sunlight and start to burn.
 	    */
-	   //焼かれないよう変更
+	   //焼かれないように変更
 	   public void livingTick() {
 	      if (this.isInDaylight()) {
 	         //this.setFire(8);
@@ -209,13 +213,15 @@ public class EntitySkyRoamer extends EntityFlying implements IMob{
 	      return SoundEvents.ENTITY_PHANTOM_HURT;
 	   }
 
+	   
 	   protected SoundEvent getDeathSound() {
 	      return SoundEvents.ENTITY_PHANTOM_DEATH;
+	      
 	   }
-
+	   
 	   @Nullable
 	   protected ResourceLocation getLootTable() {
-	      return LootTableList.ENTITIES_PHANTOM;
+	      return UnderGroundMod.ENTITIES_SKYROAMER;
 	   }
 
 	   public CreatureAttribute getCreatureAttribute() {
@@ -549,5 +555,11 @@ public class EntitySkyRoamer extends EntityFlying implements IMob{
 	         EntitySkyRoamer.this.motionZ += (d4 - EntitySkyRoamer.this.motionZ) * 0.2D;
 	      }
 	   }
+	   
+
+	   
+	   
+	   
+	   
 
 }

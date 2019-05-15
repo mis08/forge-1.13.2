@@ -3,5 +3,6 @@
   "item.undergroundmod.exparrow": "ExpArrow",
   "item.undergroundmod.expbow":"ExpBow",
   "item.undergroundmod.itemtest":"ItmeTest",
-  "item.undergroundmod.spawnskyroamer":"SpwnSkyRoamer"
+  "item.undergroundmod.spawnskyroamer":"SpwnSkyRoamer",
+  "entity.minecraft.skyroamer":"SkyRoamer"
 }
