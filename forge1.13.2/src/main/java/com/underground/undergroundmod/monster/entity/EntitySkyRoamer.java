@@ -7,7 +7,7 @@ import javax.annotation.Nullable;
 import com.underground.undergroundmod.UnderGroundMod;
 import com.underground.undergroundmod.entity.AddEntity;
 
-
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.CreatureAttribute;
 import net.minecraft.entity.EntityBodyHelper;
 import net.minecraft.entity.EntityFlying;
@@ -38,6 +38,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.EnumDifficulty;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.storage.loot.LootTableList;
@@ -61,6 +62,18 @@ public class EntitySkyRoamer extends EntityFlying implements IMob{
 	      this.moveHelper = new EntitySkyRoamer.MoveHelper(this);
 	      this.lookHelper = new EntitySkyRoamer.LookHelper(this);
 	   }
+	   
+	   @Override
+	public boolean canSpawn(IWorld worldIn, boolean p_205020_2_) {
+		      IBlockState iblockstate = worldIn.getBlockState((new BlockPos(this)).down());
+		      BlockPos iblickpos = new BlockPos(this);
+		      if(worldIn.canSeeSky(iblickpos)) {
+		    	  return iblockstate.canEntitySpawn(this);  
+		      }else {
+		    	  return false;
+		      }
+		 
+	}
 	   
 	   
 	   
