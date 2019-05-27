@@ -1,5 +1,6 @@
 package com.underground.undergroundmod.render;
 
+import com.underground.undergroundmod.entity.EntityBullet;
 import com.underground.undergroundmod.entity.EntityExpArrow;
 import com.underground.undergroundmod.entity.EntityTippedExpArrow;
 import com.underground.undergroundmod.monster.entity.EntitySkyRoamer;
@@ -18,5 +19,6 @@ public class AddRender {
 		RenderingRegistry.registerEntityRenderingHandler(EntityExpArrow.class, RenderExpArrow::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityTippedExpArrow.class, RenderTippedExpArrow::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntitySkyRoamer.class, RenderSkyRoamer::new);
+		RenderingRegistry.registerEntityRenderingHandler(EntityBullet.class, RenderBullet::new);
 	}
 } 

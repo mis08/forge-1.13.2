@@ -1,0 +1,6 @@
+{
+    "parent":"undergroundmod:item/automaticrifle",
+    "textures":{
+        "layer0":"undergroundmod:items/automaticrifle"
+    }
+}

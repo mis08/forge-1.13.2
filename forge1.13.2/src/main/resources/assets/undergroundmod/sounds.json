@@ -1,0 +1,12 @@
+{
+  "gunsound": {
+    "category": "record",
+    "sounds": [
+      {
+        "name": "undergroundmod:gunsound",
+        "pitch":0.1,
+        "volume":0.6
+      }
+    ]
+  }
+}

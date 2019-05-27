@@ -4,15 +4,18 @@ package com.underground.undergroundmod;
 import static com.underground.undergroundmod.ModIdHolder.MODID;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.audio.Sound;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.world.storage.loot.LootEntry;
 import net.minecraft.world.storage.loot.LootEntryTable;
 import net.minecraft.world.storage.loot.LootPool;
@@ -87,20 +90,26 @@ public class UnderGroundMod
     //Entity作成
     public static EntityType<?> EntityExpArrow =EntityType.Builder.create(EntityExpArrow.class,EntityExpArrow::new).tracker(60, 5, true).build(MODID+":entityexparrow").setRegistryName(new ResourceLocation( MODID,"entityexparrow"));
 	public static EntityType<?> EntityTippedExpArrow = EntityType.Builder.create(EntityTippedExpArrow.class,EntityTippedExpArrow::new).tracker(60,5,true).build(MODID+":entitytippedexparrow").setRegistryName(new ResourceLocation(MODID,"entitytippedexparrow"));
-	public static EntityType<?> EntitySkyRoamer = EntityType.Builder.create(EntitySkyRoamer.class,EntitySkyRoamer::new).tracker(60, 1, true).build(MODID+":entityskyroamer").setRegistryName(new ResourceLocation(MODID,"entityskyroamer"));
-
+	public static EntityType<?> EntitySkyRoamer = EntityType.Builder.create(EntitySkyRoamer.class,EntitySkyRoamer::new).tracker(40, 5, true).build(MODID+":entityskyroamer").setRegistryName(new ResourceLocation(MODID,"entityskyroamer"));
+	public static EntityType<?> EntityBullet =EntityType.Builder.create(EntityBullet.class,EntityBullet::new).tracker(60, 1, true).build(MODID+":entitybullet").setRegistryName(new ResourceLocation(MODID,"entitybullet"));
+	
     
     //Itemプロパティ作成
     public static Item test = new Itemtest(new Item.Properties().group(tabUnder).maxStackSize(64)).setRegistryName(new ResourceLocation(MODID, "itemtest"));
     public static Item ExpArrow =new ExpArrow(new Item.Properties().group(tabUnder).maxStackSize(64)).setRegistryName(new ResourceLocation(MODID, "exparrow"));
     public static Item ExpBow =new ExpBow(new Item.Properties().group(tabUnder).defaultMaxDamage(384)).setRegistryName(new ResourceLocation(MODID, "expbow"));
     public static Item SpawnSkyRoamer =new SpawnSkyRoamer(new Item.Properties().group(tabUnder).defaultMaxDamage(384)).setRegistryName(new ResourceLocation(MODID, "spawnskyroamer"));
-   
+    public static Item AutomaticRifle =new AutomaticRifle(new Item.Properties().group(tabUnder).defaultMaxDamage(384)).setRegistryName(new ResourceLocation(MODID, "automaticrifle"));
     
+    
+    //ドロップ変更
 	public static final ResourceLocation ENTITIES_SKYROAMER = LootTableList.register(new ResourceLocation(ModIdHolder.MODID,"inject/skyroamer"));
 	public static final ResourceLocation ENTITIES_CREEPER = LootTableList.register(new ResourceLocation(ModIdHolder.MODID,"inject/more_creeper"));
 	public static final ResourceLocation SPAWN_BONUS_CHEST = LootTableList.register(new ResourceLocation(ModIdHolder.MODID,"inject/spawn_bonus_chest"));
 
+	
+	//サウンド作成
+	public static final SoundEvent GunSound = new SoundEvent(new ResourceLocation(MODID,"gunsound")).setRegistryName(new ResourceLocation(MODID,"gunsound"));
     
     private void setup(final FMLCommonSetupEvent event)
     {
@@ -165,7 +174,8 @@ public class UnderGroundMod
         			//test,
         			ExpArrow,
         			ExpBow,
-        			SpawnSkyRoamer
+        			SpawnSkyRoamer,
+        			AutomaticRifle
         	);
         }
        
@@ -175,14 +185,24 @@ public class UnderGroundMod
         	entityRegister.getRegistry().registerAll(
         			EntityExpArrow,
         			EntityTippedExpArrow,
-        			EntitySkyRoamer
+        			EntitySkyRoamer,
+        			EntityBullet
         			);
         	
         	//Entityタイプ登録
         	AddEntity.entityTypeRegister();
-        	
-        	
         } 
+        
+        @SubscribeEvent
+        public static void onSoundRegistry(final RegistryEvent.Register<SoundEvent> soundRegister) {
+        	//Sound登録
+        	//resources/assets/undergroundmod/ にあるsounds.json　にも追加記載すること
+        	soundRegister.getRegistry().registerAll(
+        			GunSound
+        			);
+        	
+        	
+        }
        
    
     }
