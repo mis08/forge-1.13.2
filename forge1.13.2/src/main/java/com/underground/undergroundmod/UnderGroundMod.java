@@ -14,6 +14,7 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Item.Properties;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.storage.loot.LootEntry;
@@ -50,8 +51,6 @@ import com.underground.undergroundmod.entity.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.EntityReplacementMap;
-
-import com.underground.undergroundmod.item.Itemtest;
 
 import java.util.stream.Collectors;
 
@@ -100,6 +99,7 @@ public class UnderGroundMod
     public static Item ExpBow =new ExpBow(new Item.Properties().group(tabUnder).defaultMaxDamage(384)).setRegistryName(new ResourceLocation(MODID, "expbow"));
     public static Item SpawnSkyRoamer =new SpawnSkyRoamer(new Item.Properties().group(tabUnder).defaultMaxDamage(384)).setRegistryName(new ResourceLocation(MODID, "spawnskyroamer"));
     public static Item AutomaticRifle =new AutomaticRifle(new Item.Properties().group(tabUnder).defaultMaxDamage(384)).setRegistryName(new ResourceLocation(MODID, "automaticrifle"));
+    public static Item Magazine =new Magazine(new Item.Properties().group(tabUnder).defaultMaxDamage(384)).setRegistryName(new ResourceLocation(MODID,"magazine"));
     
     
     //ドロップ変更
@@ -175,7 +175,8 @@ public class UnderGroundMod
         			ExpArrow,
         			ExpBow,
         			SpawnSkyRoamer,
-        			AutomaticRifle
+        			AutomaticRifle,
+        			Magazine
         	);
         }
        
@@ -189,7 +190,7 @@ public class UnderGroundMod
         			EntityBullet
         			);
         	
-        	//Entityタイプ登録
+        	//EntityMonsterタイプ登録
         	AddEntity.entityTypeRegister();
         } 
         
