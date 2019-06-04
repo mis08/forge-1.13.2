@@ -13,6 +13,7 @@ import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemSpawnEgg;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Item.Properties;
 import net.minecraft.util.ResourceLocation;
@@ -39,8 +40,7 @@ import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
-import com.underground.undergroundmod.entity.EntityExpArrow;
-import com.underground.undergroundmod.entity.EntityTippedExpArrow;
+
 import com.underground.undergroundmod.render.*;
 import com.underground.undergroundmod.item.*;
 import com.underground.undergroundmod.monster.*;
@@ -91,7 +91,10 @@ public class UnderGroundMod
 	public static EntityType<?> EntityTippedExpArrow = EntityType.Builder.create(EntityTippedExpArrow.class,EntityTippedExpArrow::new).tracker(60,5,true).build(MODID+":entitytippedexparrow").setRegistryName(new ResourceLocation(MODID,"entitytippedexparrow"));
 	public static EntityType<?> EntitySkyRoamer = EntityType.Builder.create(EntitySkyRoamer.class,EntitySkyRoamer::new).tracker(40, 5, true).build(MODID+":entityskyroamer").setRegistryName(new ResourceLocation(MODID,"entityskyroamer"));
 	public static EntityType<?> EntityBullet =EntityType.Builder.create(EntityBullet.class,EntityBullet::new).tracker(60, 1, true).build(MODID+":entitybullet").setRegistryName(new ResourceLocation(MODID,"entitybullet"));
+	public static EntityType<?> EntitySupRob = EntityType.Builder.create(EntitySupRob.class,EntitySupRob::new).tracker(60,1,true).build(MODID+":entitysuprob").setRegistryName(new ResourceLocation(MODID,"entitysuprob"));
 	
+	
+	public static EntityType<EntitySupRob> SUPROB = EntityType.register("suprob",EntityType.Builder.create(EntitySupRob.class, EntitySupRob::new));
     
     //Itemプロパティ作成
     public static Item test = new Itemtest(new Item.Properties().group(tabUnder).maxStackSize(64)).setRegistryName(new ResourceLocation(MODID, "itemtest"));
@@ -100,7 +103,7 @@ public class UnderGroundMod
     public static Item SpawnSkyRoamer =new SpawnSkyRoamer(new Item.Properties().group(tabUnder).defaultMaxDamage(384)).setRegistryName(new ResourceLocation(MODID, "spawnskyroamer"));
     public static Item AutomaticRifle =new AutomaticRifle(new Item.Properties().group(tabUnder).defaultMaxDamage(384)).setRegistryName(new ResourceLocation(MODID, "automaticrifle"));
     public static Item Magazine =new Magazine(new Item.Properties().group(tabUnder).defaultMaxDamage(384)).setRegistryName(new ResourceLocation(MODID,"magazine"));
-    
+    public static Item SpawnSupRob =new ItemSpawnEgg(SUPROB,9999999,9999999,(new Item.Properties().group(tabUnder).defaultMaxDamage(384))).setRegistryName(new ResourceLocation(MODID, "spawnsuprob"));
     
     //ドロップ変更
 	public static final ResourceLocation ENTITIES_SKYROAMER = LootTableList.register(new ResourceLocation(ModIdHolder.MODID,"inject/skyroamer"));
@@ -110,6 +113,9 @@ public class UnderGroundMod
 	
 	//サウンド作成
 	public static final SoundEvent GunSound = new SoundEvent(new ResourceLocation(MODID,"gunsound")).setRegistryName(new ResourceLocation(MODID,"gunsound"));
+	public static final SoundEvent R2D2flat = new SoundEvent(new ResourceLocation(MODID,"r2d2_flat")).setRegistryName(new ResourceLocation(MODID,"r2d2_flat"));
+	public static final SoundEvent R2D2Scream = new SoundEvent(new ResourceLocation(MODID,"r2d2_scream")).setRegistryName(new ResourceLocation(MODID,"r2d2_scream"));
+	public static final SoundEvent R2D2Beap = new SoundEvent(new ResourceLocation(MODID,"r2d2_beap")).setRegistryName(new ResourceLocation(MODID,"r2d2_beap"));
     
     private void setup(final FMLCommonSetupEvent event)
     {
@@ -176,7 +182,8 @@ public class UnderGroundMod
         			ExpBow,
         			SpawnSkyRoamer,
         			AutomaticRifle,
-        			Magazine
+        			Magazine,
+        			SpawnSupRob
         	);
         }
        
@@ -187,9 +194,9 @@ public class UnderGroundMod
         			EntityExpArrow,
         			EntityTippedExpArrow,
         			EntitySkyRoamer,
-        			EntityBullet
+        			EntityBullet,
+        			EntitySupRob
         			);
-        	
         	//EntityMonsterタイプ登録
         	AddEntity.entityTypeRegister();
         } 
@@ -199,7 +206,10 @@ public class UnderGroundMod
         	//Sound登録
         	//resources/assets/undergroundmod/ にあるsounds.json　にも追加記載すること
         	soundRegister.getRegistry().registerAll(
-        			GunSound
+        			GunSound,
+        			R2D2flat,
+        			R2D2Scream,
+        			R2D2Beap
         			);
         	
         	

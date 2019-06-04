@@ -9,5 +9,38 @@
         "stream":"true"
       }
     ]
+  },
+  "r2d2_flat":{
+      "category":"record",
+       "sounds":[
+      {
+         "name":"undergroundmod:r2d2_flat"
+      },
+     {
+         "name":"undergroundmod:r2d2_flat3"
+      },
+      {
+          "name":"undergroundmod:r2d2_flat4"
+      }
+      ]
+  },
+  "r2d2_beap":{
+      "category":"record",
+      "sounds":[
+          {
+              "name":"undergroundmod:r2d2_flat_beap"
+          },
+          {
+              "name":"undergroundmod:r2d2_flat_call2"
+          }
+      ]
+  },
+  "r2d2_scream":{
+      "category":"record",
+      "sounds":[
+          {
+              "name":"undergroundmod:r2d2_scream"
+          }
+      ]
   }
 }

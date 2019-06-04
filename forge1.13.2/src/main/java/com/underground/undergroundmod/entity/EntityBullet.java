@@ -71,7 +71,7 @@ public class EntityBullet extends EntityArrow{
     }
 
 	   
-	   public EntityBullet(World worldIn2, EntityPlayer shooter) {
+	   public EntityBullet(World worldIn2, EntityLivingBase shooter) {
 		   this(EntityType.ARROW,shooter,worldIn2);
 	}
 

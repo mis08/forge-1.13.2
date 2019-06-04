@@ -1,0 +1,19 @@
+{
+    "type":"crafting_shaped",
+    "pattern":[
+        "XYX",
+        "XYX",
+        "XYX"
+    ],
+    "key":{
+      "X":{
+     "item": "minecraft:iron_ingot"
+      },
+     "Y":{
+     "item": "minecraft:gunpowder"
+      }
+    },
+    "result":{
+        "item": "undergroundmod:magazine"
+    }
+}

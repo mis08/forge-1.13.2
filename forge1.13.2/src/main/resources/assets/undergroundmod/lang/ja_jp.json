@@ -4,5 +4,10 @@
   "item.undergroundmod.expbow":"ExpBow",
   "item.undergroundmod.itemtest":"ItmeTest",
   "item.undergroundmod.spawnskyroamer":"SpwnSkyRoamer",
-  "entity.minecraft.skyroamer":"SkyRoamer"
+  "item.undergroundmod.automaticrifle":"AuntomaticRifle",
+  "item.undergroundmod.magazine":"Magazine",
+  "item.undergroundmod.spawnsuprob":"SupRob",
+  "entity.minecraft.skyroamer":"SkyRoamer",
+  "entity.minecraft.spurob":"SupRob"
+
 }

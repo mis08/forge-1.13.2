@@ -2,6 +2,7 @@ package com.underground.undergroundmod.entity;
 
 import static com.underground.undergroundmod.ModIdHolder.MODID;
 import static com.underground.undergroundmod.UnderGroundMod.EntitySkyRoamer;
+import static com.underground.undergroundmod.UnderGroundMod.EntitySupRob;
 
 import com.underground.undergroundmod.monster.entity.EntitySkyRoamer;
 
@@ -44,6 +45,7 @@ public class AddEntity {
 	
 	//Entity宣言
 	public static  EntityType<EntitySkyRoamer> SKYROAMER;
+	public static EntityType<EntitySupRob> SUPROB = EntityType.register("suprob",EntityType.Builder.create(EntitySupRob.class, EntitySupRob::new));
 	
 		//Entity登録
 	public static void entityTypeRegister() {
@@ -84,11 +86,13 @@ public class AddEntity {
 	}
 	
 	public static void registerEggs(final RegistryEvent.Register<Item> event) {
-		event.getRegistry().register(makeSpawnEgg(EntitySkyRoamer,0xffffff,0xff66e2,"SkyRoamer"));
+	//	event.getRegistry().register(makeSpawnEgg(EntitySkyRoamer,0xffffff,0xff66e2,"SkyRoamer"));
+		event.getRegistry().register(makeSpawnEgg(EntitySupRob,0xffffff,0xff66e2,"SpawnSupRob"));
+		
 	}
 	
 	private static Item makeSpawnEgg(EntityType<?> type, int color1,int color2,String name) {
-		return new ItemSpawnEgg(type,color1,color2,new Item.Properties().group(ItemGroup.SEARCH)).setRegistryName(MODID,name);
+		return new ItemSpawnEgg(type,color1,color2,new Item.Properties().group(UnderGroundMod.tabUnder)).setRegistryName(MODID,name);
 	}
 
 
