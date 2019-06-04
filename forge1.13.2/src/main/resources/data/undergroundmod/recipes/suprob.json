@@ -1,0 +1,25 @@
+{
+    "type":"crafting_shaped",
+    "pattern":[
+        "XYX",
+        "XZX",
+        "XVX"
+    ],
+    "key":{
+      "X":{
+     "item": "minecraft:iron_block"
+      },
+     "Y":{
+     "item": "undergroundmod:automaticrifle"
+      },
+      "Z":{
+          "item":"undergroundmod:circuit"
+      },
+      "V":{
+          "item":"minecraft:redstone_block"
+      }
+    },
+    "result":{
+        "item": "undergroundmod:spawnsuprob"
+    }
+}

@@ -104,14 +104,15 @@ public class UnderGroundMod
     public static Item AutomaticRifle =new AutomaticRifle(new Item.Properties().group(tabUnder).defaultMaxDamage(384)).setRegistryName(new ResourceLocation(MODID, "automaticrifle"));
     public static Item Magazine =new Magazine(new Item.Properties().group(tabUnder).defaultMaxDamage(384)).setRegistryName(new ResourceLocation(MODID,"magazine"));
     public static Item SpawnSupRob =new ItemSpawnEgg(SUPROB,9999999,9999999,(new Item.Properties().group(tabUnder).defaultMaxDamage(384))).setRegistryName(new ResourceLocation(MODID, "spawnsuprob"));
+    public static Item Circuit =new Circuit(new Item.Properties().group(tabUnder).maxStackSize(64)).setRegistryName(new ResourceLocation(MODID,"circuit"));
     
-    //ドロップ変更
+    //Entity変更
 	public static final ResourceLocation ENTITIES_SKYROAMER = LootTableList.register(new ResourceLocation(ModIdHolder.MODID,"inject/skyroamer"));
 	public static final ResourceLocation ENTITIES_CREEPER = LootTableList.register(new ResourceLocation(ModIdHolder.MODID,"inject/more_creeper"));
 	public static final ResourceLocation SPAWN_BONUS_CHEST = LootTableList.register(new ResourceLocation(ModIdHolder.MODID,"inject/spawn_bonus_chest"));
 
 	
-	//サウンド作成
+	//Sound作成
 	public static final SoundEvent GunSound = new SoundEvent(new ResourceLocation(MODID,"gunsound")).setRegistryName(new ResourceLocation(MODID,"gunsound"));
 	public static final SoundEvent R2D2flat = new SoundEvent(new ResourceLocation(MODID,"r2d2_flat")).setRegistryName(new ResourceLocation(MODID,"r2d2_flat"));
 	public static final SoundEvent R2D2Scream = new SoundEvent(new ResourceLocation(MODID,"r2d2_scream")).setRegistryName(new ResourceLocation(MODID,"r2d2_scream"));
@@ -183,7 +184,8 @@ public class UnderGroundMod
         			SpawnSkyRoamer,
         			AutomaticRifle,
         			Magazine,
-        			SpawnSupRob
+        			SpawnSupRob,
+        			Circuit
         	);
         }
        
