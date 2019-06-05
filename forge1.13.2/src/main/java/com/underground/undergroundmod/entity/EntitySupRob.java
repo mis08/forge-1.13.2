@@ -5,8 +5,10 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 import com.underground.undergroundmod.UnderGroundMod;
+import com.underground.undergroundmod.item.Magazine;
 import com.underground.undergroundmod.monster.entity.EntitySkyRoamer;
 
+import net.minecraft.client.player.inventory.ContainerLocalMenu;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EntityType;
@@ -19,23 +21,36 @@ import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.ContainerHorseChest;
 import net.minecraft.inventory.ContainerShulkerBox;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.IInventoryChangedListener;
+import net.minecraft.inventory.InventoryBasic;
+import net.minecraft.inventory.InventoryLargeChest;
+import net.minecraft.inventory.InventoryMerchant;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
+import net.minecraft.item.ItemSpawnEgg;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.INBTBase;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializer;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.stats.Stat;
+import net.minecraft.stats.StatList;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.ILockableContainer;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -46,22 +61,23 @@ public class EntitySupRob extends EntityTameable implements IRangedAttackMob,IIn
 
 	private static final DataParameter<Float> DATA_HEALTH_ID = EntityDataManager.createKey(EntitySupRob.class,DataSerializers.FLOAT);
 	private static final DataParameter<Boolean> BEGGING = EntityDataManager.createKey(EntitySupRob.class, DataSerializers.BOOLEAN);
-	private static final DataParameter<Byte> STATUS = EntityDataManager.createKey(EntitySupRob.class, DataSerializers.BYTE);
+	private static final DataParameter<Boolean> DATA_ID_CHEST = EntityDataManager.createKey(EntitySupRob.class, DataSerializers.BOOLEAN);
 	private net.minecraftforge.common.util.LazyOptional<?> itemHandler = null;
 	private float headRotationCourseOld;
 	private float headRotationCourse;
 	
-	protected ContainerHorseChest suprobChest;
+	protected InventoryBasic suprobChest;
 	
 	public EntitySupRob(EntityType<?> entity,World worldIn) {
 		super(entity,worldIn);
+
 	}
 	
 	public EntitySupRob(World worldIn) {
 		super(UnderGroundMod.EntitySupRob,worldIn);
 		this.setSize(0.6F, 0.85F);
 		this.setTamed(false);
-
+		this.initSupRobChest();
 	}
 	
 	protected void initEntityAI() {
@@ -78,7 +94,10 @@ public class EntitySupRob extends EntityTameable implements IRangedAttackMob,IIn
 		super.registerData();
 		this.dataManager.register(DATA_HEALTH_ID,this.getHealth());
 		this.dataManager.register(BEGGING,false);
+		this.dataManager.register(DATA_ID_CHEST, true);
 	}
+
+	
 	
 	@Override
 	protected SoundEvent getAmbientSound() {
@@ -215,14 +234,23 @@ public class EntitySupRob extends EntityTameable implements IRangedAttackMob,IIn
 	}
 	
 	public void Gunfire(EntityLivingBase target,float distanceFactor) {
-		EntityBullet entityarrow = this.getbullet(distanceFactor);
-		double d0 = target.posX - this.posX;
-		double d1 = target.getBoundingBox().minY + (double)(target.height / 3.0F) - entityarrow.posY;
-		double d2 = target.posZ - this.posZ;
-		double d3 = (double)MathHelper.sqrt(d0 * d0 + d2 * d2);
-		entityarrow.shoot(d0, d1 + d3 * (double)0.2F, d2, 3 * 3.0F,1.0F);
-		this.playSound(UnderGroundMod.GunSound, 1.0F, 1.0F / (this.getRNG().nextFloat() * 0.4F + 0.8F));
-		this.world.spawnEntity(entityarrow);
+		if(!this.world.isRemote && this.suprobChest !=null) {
+			for(int i=0; i<this.suprobChest.getSizeInventory(); ++i) {
+				ItemStack itemstack =this.suprobChest.getStackInSlot(i);
+				if(itemstack.getItem() instanceof Magazine) {
+					EntityBullet entityarrow = this.getbullet(distanceFactor);
+					double d0 = target.posX - this.posX;
+					double d1 = target.getBoundingBox().minY + (double)(target.height / 3.0F) - entityarrow.posY;
+					double d2 = target.posZ - this.posZ;
+					double d3 = (double)MathHelper.sqrt(d0 * d0 + d2 * d2);
+					entityarrow.shoot(d0, d1 + d3 * (double)0.2F, d2, 3 * 3.0F,1.0F);
+					this.playSound(UnderGroundMod.GunSound, 1.0F, 1.0F / (this.getRNG().nextFloat() * 0.4F + 0.8F));
+					this.world.spawnEntity(entityarrow);
+					itemstack.damageItem(1, this);
+				}
+			}
+		}
+
 	}
 	
 	protected EntityBullet getbullet(float p_190726_1_) {
@@ -230,13 +258,10 @@ public class EntitySupRob extends EntityTameable implements IRangedAttackMob,IIn
       return entitybullet;
    }
 	
-	protected int getInventorySize() {
-		return 2;
-	}
 	
 	protected void initSupRobChest() {
-		ContainerHorseChest containersuprobchest = this.suprobChest;
-		this.suprobChest = new ContainerHorseChest(this.getName(), this.getInventorySize());
+		InventoryBasic containersuprobchest = this.suprobChest;
+		this.suprobChest =new InventoryBasic(this.getName(), this.getInventorySize());
 		this.suprobChest.setCustomName(this.getCustomName());
 		if(containersuprobchest !=null) {
 			containersuprobchest.removeListener(this);
@@ -251,39 +276,33 @@ public class EntitySupRob extends EntityTameable implements IRangedAttackMob,IIn
 		}
 		
 		this.suprobChest.addListener(this);
-		this.updateSupRobSlots();
 		this.itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this.suprobChest));
 	}
 	
-	protected void updateSupRobSlots() {
-		if(!this.world.isRemote) {
-			this.setSupRobSaddled(!this.suprobChest.getStackInSlot(0).isEmpty() && this.canBeSaddled());
-		}
+	public boolean hasChest() {
+		return this.dataManager.get(DATA_ID_CHEST);
 	}
+
+	public void setChested(boolean chested) {
+		this.dataManager.set(DATA_ID_CHEST, chested);
+	}
+
+	protected int getInventorySize() {
+		return 17;
+	}
+	
+	
 	
 	
 	public boolean canBeSaddled() {
 		return true;
-	}
-	
-	public void setSupRobSaddled(boolean saddled) {
-		this.setSupRobWatchableBoolean(4,saddled);
-	}
-	
-	protected void setSupRobWatchableBoolean(int sam1,boolean sam2) {
-		byte b0 =this.dataManager.get(STATUS);
-		if(sam2) {
-			this.dataManager.set(STATUS,(byte)(b0 | sam1));
-		}else {
-			this.dataManager.set(STATUS, (byte)(b0 & ~sam1));
-		}
 	}
 
 
 	@Override
 	public void onInventoryChanged(IInventory invBasic) {
 		if(this.ticksExisted > 20) {
-			this.playSound(SoundEvents.ENTITY_HORSE_SADDLE, 0.5F, 1.0F);
+//			this.playSound(SoundEvents.ENTITY_HORSE_SADDLE, 0.5F, 1.0F);
 		}
 	}
 	
@@ -293,6 +312,68 @@ public class EntitySupRob extends EntityTameable implements IRangedAttackMob,IIn
 			playerEntity.displayGUIChest(suprobChest);
 		}
 	}
+	
+	public void writeAdditional(NBTTagCompound compound) {
+		super.writeAdditional(compound);
+		compound.setBoolean("ChestedHorse", this.hasChest());
+		if (this.hasChest()) {
+			NBTTagList nbttaglist = new NBTTagList();
+
+			for(int i = 2; i < this.suprobChest.getSizeInventory(); ++i) {
+				ItemStack itemstack = this.suprobChest.getStackInSlot(i);
+				if (!itemstack.isEmpty()) {
+					NBTTagCompound nbttagcompound = new NBTTagCompound();
+					nbttagcompound.setByte("Slot", (byte)i);
+					itemstack.write(nbttagcompound);
+					nbttaglist.add((INBTBase)nbttagcompound);
+				}
+			}
+
+			compound.setTag("Items", nbttaglist);
+		}
+
+	}
+	
+	public void readAdditional(NBTTagCompound compound) {
+		super.readAdditional(compound);
+		this.setChested(compound.getBoolean("ChestedHorse"));
+		if (this.hasChest()) {
+			NBTTagList nbttaglist = compound.getList("Items", 10);
+			this.initSupRobChest();
+
+			for(int i = 0; i < nbttaglist.size(); ++i) {
+				NBTTagCompound nbttagcompound = nbttaglist.getCompound(i);
+				int j = nbttagcompound.getByte("Slot") & 255;
+				if (j >= 2 && j < this.suprobChest.getSizeInventory()) {
+					this.suprobChest.setInventorySlotContents(j, ItemStack.read(nbttagcompound));
+				}
+			}
+		}
+
+		//		this.updateHorseSlots();
+	}
+
+	public boolean replaceItemInInventory(int inventorySlot, ItemStack itemStackIn) {
+		if (inventorySlot == 499) {
+			if (this.hasChest() && itemStackIn.isEmpty()) {
+				this.setChested(false);
+				this.initSupRobChest();
+				return true;
+			}
+
+			if (!this.hasChest() && itemStackIn.getItem() == Blocks.CHEST.asItem()) {
+				this.setChested(true);
+				this.initSupRobChest();
+				return true;
+			}
+		}
+
+		return super.replaceItemInInventory(inventorySlot, itemStackIn);
+	}
+
+
+	
+	
 	
 	@Override
 	public void onDeath(DamageSource cause) {
@@ -306,6 +387,7 @@ public class EntitySupRob extends EntityTameable implements IRangedAttackMob,IIn
 					this.entityDropItem(itemstack);
 				}
 			}
+			this.setChested(false);
 		}
 	}
 	

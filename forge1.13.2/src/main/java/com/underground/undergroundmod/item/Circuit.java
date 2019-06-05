@@ -6,6 +6,6 @@ public class Circuit extends Item{
 	
 	public Circuit(Item.Properties builder) {
 		super(builder);
-}
+	}
 
 }
