@@ -105,6 +105,8 @@ public class UnderGroundMod
     public static Item Magazine =new Magazine(new Item.Properties().group(tabUnder).defaultMaxDamage(384)).setRegistryName(new ResourceLocation(MODID,"magazine"));
     public static Item SpawnSupRob =new ItemSpawnEgg(SUPROB,9999999,9999999,(new Item.Properties().group(tabUnder).defaultMaxDamage(384))).setRegistryName(new ResourceLocation(MODID, "spawnsuprob"));
     public static Item Circuit =new Circuit(new Item.Properties().group(tabUnder).maxStackSize(64)).setRegistryName(new ResourceLocation(MODID,"circuit"));
+    public static Item RobotConnecter =new RobotConnecter(new Item.Properties().group(tabUnder).defaultMaxDamage(384)).setRegistryName(new ResourceLocation(MODID,"robotconnecter"));
+    
     
     //Entity変更
 	public static final ResourceLocation ENTITIES_SKYROAMER = LootTableList.register(new ResourceLocation(ModIdHolder.MODID,"inject/skyroamer"));
@@ -185,7 +187,8 @@ public class UnderGroundMod
         			AutomaticRifle,
         			Magazine,
         			SpawnSupRob,
-        			Circuit
+        			Circuit,
+        			RobotConnecter
         	);
         }
        

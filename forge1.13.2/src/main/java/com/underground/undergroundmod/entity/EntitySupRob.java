@@ -2,6 +2,8 @@ package com.underground.undergroundmod.entity;
 
 import java.util.UUID;
 
+import javax.annotation.Nullable;
+
 import com.underground.undergroundmod.UnderGroundMod;
 import com.underground.undergroundmod.monster.entity.EntitySkyRoamer;
 
@@ -18,10 +20,16 @@ import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
+import net.minecraft.init.SoundEvents;
+import net.minecraft.inventory.ContainerHorseChest;
+import net.minecraft.inventory.ContainerShulkerBox;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.IInventoryChangedListener;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializer;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
@@ -31,13 +39,19 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
 
-public class EntitySupRob extends EntityTameable implements IRangedAttackMob{
+public class EntitySupRob extends EntityTameable implements IRangedAttackMob,IInventoryChangedListener{
 
 	private static final DataParameter<Float> DATA_HEALTH_ID = EntityDataManager.createKey(EntitySupRob.class,DataSerializers.FLOAT);
 	private static final DataParameter<Boolean> BEGGING = EntityDataManager.createKey(EntitySupRob.class, DataSerializers.BOOLEAN);
+	private static final DataParameter<Byte> STATUS = EntityDataManager.createKey(EntitySupRob.class, DataSerializers.BYTE);
+	private net.minecraftforge.common.util.LazyOptional<?> itemHandler = null;
 	private float headRotationCourseOld;
 	private float headRotationCourse;
+	
+	protected ContainerHorseChest suprobChest;
 	
 	public EntitySupRob(EntityType<?> entity,World worldIn) {
 		super(entity,worldIn);
@@ -70,7 +84,7 @@ public class EntitySupRob extends EntityTameable implements IRangedAttackMob{
 	protected SoundEvent getAmbientSound() {
 		// TODO 自動生成されたメソッド・スタブ
 		
-		return this.isTamed() && this.dataManager.get(DATA_HEALTH_ID) < 10.0F ? UnderGroundMod.R2D2flat : UnderGroundMod.R2D2Beap;
+		return this.isTamed() && this.dataManager.get(DATA_HEALTH_ID) < 10.0F ? UnderGroundMod.R2D2Beap : UnderGroundMod.R2D2flat;
  	}
 	
 	@Override
@@ -82,7 +96,7 @@ public class EntitySupRob extends EntityTameable implements IRangedAttackMob{
 	@Override
 	protected void registerAttributes() {
 		super.registerAttributes();
-		this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue((double)0.5F);
+		this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue((double)0.3F);
 		this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(50.0D);
 		this.getAttributeMap().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(2.0D);
 	    
@@ -105,7 +119,13 @@ public class EntitySupRob extends EntityTameable implements IRangedAttackMob{
 	public boolean processInteract(EntityPlayer player, EnumHand hand) {
 		ItemStack itemstack = player.getHeldItem(hand);
 		Item item = itemstack.getItem();
+		
 	      if (this.isTamed()) {
+	    	  if(player.isSneaking()) {
+	    		  this.openGUI(player);
+	    		  return true;
+	    	  }
+	    	  
 	          if (!itemstack.isEmpty()) {
 	             if (item instanceof ItemFood) {
 	                ItemFood itemfood = (ItemFood)item;
@@ -119,6 +139,8 @@ public class EntitySupRob extends EntityTameable implements IRangedAttackMob{
 	                }
 	             }
 	          }
+	          
+
 
 	          if (this.isOwner(player) && !this.world.isRemote && !this.isBreedingItem(itemstack)) {
 	             this.aiSit.setSitting(!this.isSitting());
@@ -126,7 +148,7 @@ public class EntitySupRob extends EntityTameable implements IRangedAttackMob{
 	             this.navigator.clearPath();
 	             this.setAttackTarget((EntityLivingBase)null);
 	          }
-	       } else if (item == Items.BONE) {
+	       } else if (item == UnderGroundMod.RobotConnecter) {
 	          if (!player.abilities.isCreativeMode) {
 	             itemstack.shrink(1);
 	          }
@@ -137,7 +159,7 @@ public class EntitySupRob extends EntityTameable implements IRangedAttackMob{
 	                this.navigator.clearPath();
 	                this.setAttackTarget((EntityLivingBase)null);
 	                this.aiSit.setSitting(false);
-	                this.setHealth(20.0F);
+	                this.setHealth(50.0F);
 	                this.playTameEffect(true);
 	                this.world.setEntityState(this, (byte)7);
 	             } else {
@@ -199,7 +221,6 @@ public class EntitySupRob extends EntityTameable implements IRangedAttackMob{
 		double d2 = target.posZ - this.posZ;
 		double d3 = (double)MathHelper.sqrt(d0 * d0 + d2 * d2);
 		entityarrow.shoot(d0, d1 + d3 * (double)0.2F, d2, 3 * 3.0F,1.0F);
-//		entityarrow.shoot(d0, d1 + d3 * (double)0.2F, d2, 1.6F, (float)(14 - this.world.getDifficulty().getId() * 4));
 		this.playSound(UnderGroundMod.GunSound, 1.0F, 1.0F / (this.getRNG().nextFloat() * 0.4F + 0.8F));
 		this.world.spawnEntity(entityarrow);
 	}
@@ -208,10 +229,109 @@ public class EntitySupRob extends EntityTameable implements IRangedAttackMob{
 		EntityBullet entitybullet =new EntityBullet(this.world,this);
       return entitybullet;
    }
+	
+	protected int getInventorySize() {
+		return 2;
+	}
+	
+	protected void initSupRobChest() {
+		ContainerHorseChest containersuprobchest = this.suprobChest;
+		this.suprobChest = new ContainerHorseChest(this.getName(), this.getInventorySize());
+		this.suprobChest.setCustomName(this.getCustomName());
+		if(containersuprobchest !=null) {
+			containersuprobchest.removeListener(this);
+			int i = Math.min(containersuprobchest.getSizeInventory(), this.suprobChest.getSizeInventory());
+			
+			for(int j=0; j<i; ++j) {
+				ItemStack itemstack = containersuprobchest.getStackInSlot(j);
+				if(!itemstack.isEmpty()){
+					this.suprobChest.setInventorySlotContents(j, itemstack.copy());
+				}
+			}
+		}
+		
+		this.suprobChest.addListener(this);
+		this.updateSupRobSlots();
+		this.itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this.suprobChest));
+	}
+	
+	protected void updateSupRobSlots() {
+		if(!this.world.isRemote) {
+			this.setSupRobSaddled(!this.suprobChest.getStackInSlot(0).isEmpty() && this.canBeSaddled());
+		}
+	}
+	
+	
+	public boolean canBeSaddled() {
+		return true;
+	}
+	
+	public void setSupRobSaddled(boolean saddled) {
+		this.setSupRobWatchableBoolean(4,saddled);
+	}
+	
+	protected void setSupRobWatchableBoolean(int sam1,boolean sam2) {
+		byte b0 =this.dataManager.get(STATUS);
+		if(sam2) {
+			this.dataManager.set(STATUS,(byte)(b0 | sam1));
+		}else {
+			this.dataManager.set(STATUS, (byte)(b0 & ~sam1));
+		}
+	}
+
+
+	@Override
+	public void onInventoryChanged(IInventory invBasic) {
+		if(this.ticksExisted > 20) {
+			this.playSound(SoundEvents.ENTITY_HORSE_SADDLE, 0.5F, 1.0F);
+		}
+	}
+	
+	public void openGUI(EntityPlayer playerEntity) {
+		if(!this.world.isRemote && this.isTamed()) {
+			this.suprobChest.setCustomName(this.getCustomName());
+			playerEntity.displayGUIChest(suprobChest);
+		}
+	}
+	
+	@Override
+	public void onDeath(DamageSource cause) {
+		// TODO 自動生成されたメソッド・スタブ
+		super.onDeath(cause);
+		
+		if(!this.world.isRemote && this.suprobChest != null) {
+			for(int i=0; i<this.suprobChest.getSizeInventory(); ++i) {
+				ItemStack itemstack = this.suprobChest.getStackInSlot(i);
+				if(!itemstack.isEmpty()) {
+					this.entityDropItem(itemstack);
+				}
+			}
+		}
+	}
+	
+	@Override
+	public <T> LazyOptional<T> getCapability(Capability<T> cap,@Nullable net.minecraft.util.EnumFacing facing) {
+		
+		if(this.isAlive() && cap == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && itemHandler != null){
+			return itemHandler.cast();
+		}
+		return super.getCapability(cap,facing);
+	}
+	
+	@Override
+	public void remove(boolean keepData) {
+
+		super.remove(keepData);
+		if(!keepData && itemHandler !=null) {
+			itemHandler.invalidate();
+			itemHandler = null;
+			}
+	}
 
 	@Override
 	public void setSwingingArms(boolean swingingArms) {
 		// TODO 自動生成されたメソッド・スタブ
 		
 	}
+
 }

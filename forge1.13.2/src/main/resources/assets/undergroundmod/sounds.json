@@ -14,13 +14,16 @@
       "category":"record",
        "sounds":[
       {
-         "name":"undergroundmod:r2d2_flat"
+         "name":"undergroundmod:r2d2_flat",
+         "volume":0.6
       },
      {
-         "name":"undergroundmod:r2d2_flat3"
+         "name":"undergroundmod:r2d2_flat3",
+         "volume":0.6
       },
       {
-          "name":"undergroundmod:r2d2_flat4"
+          "name":"undergroundmod:r2d2_flat4",
+          "volume":0.6
       }
       ]
   },
@@ -28,10 +31,12 @@
       "category":"record",
       "sounds":[
           {
-              "name":"undergroundmod:r2d2_flat_beap"
+              "name":"undergroundmod:r2d2_flat_beap",
+              "volume":0.6
           },
           {
-              "name":"undergroundmod:r2d2_flat_call2"
+              "name":"undergroundmod:r2d2_flat_call2",
+              "volume":0.6
           }
       ]
   },
@@ -39,7 +44,8 @@
       "category":"record",
       "sounds":[
           {
-              "name":"undergroundmod:r2d2_scream"
+              "name":"undergroundmod:r2d2_scream",
+              "volume":0.6
           }
       ]
   }
