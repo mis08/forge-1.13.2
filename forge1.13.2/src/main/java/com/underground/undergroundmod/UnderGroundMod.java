@@ -1,37 +1,44 @@
 package com.underground.undergroundmod;
 
 
-import static com.underground.undergroundmod.ModIdHolder.MODID;
+import static com.underground.undergroundmod.ModIdHolder.*;
+
+import java.util.stream.Collectors;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.underground.undergroundmod.entity.AddEntity;
+import com.underground.undergroundmod.entity.EntityBullet;
+import com.underground.undergroundmod.entity.EntityExpArrow;
+import com.underground.undergroundmod.entity.EntitySupRob;
+import com.underground.undergroundmod.entity.EntityTippedExpArrow;
+import com.underground.undergroundmod.item.AutomaticRifle;
+import com.underground.undergroundmod.item.Circuit;
+import com.underground.undergroundmod.item.ExpArrow;
+import com.underground.undergroundmod.item.ExpBow;
+import com.underground.undergroundmod.item.Itemtest;
+import com.underground.undergroundmod.item.Magazine;
+import com.underground.undergroundmod.item.SpawnSkyRoamer;
+import com.underground.undergroundmod.item.Wrench;
+import com.underground.undergroundmod.monster.entity.EntitySkyRoamer;
+import com.underground.undergroundmod.render.AddRender;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.audio.Sound;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.monster.EntityCreeper;
-import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemSpawnEgg;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Item.Properties;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.world.storage.loot.LootEntry;
-import net.minecraft.world.storage.loot.LootEntryTable;
-import net.minecraft.world.storage.loot.LootPool;
 import net.minecraft.world.storage.loot.LootTableList;
-import net.minecraft.world.storage.loot.RandomValueRange;
-import net.minecraft.world.storage.loot.conditions.LootCondition;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.ToolType;
-import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -39,23 +46,6 @@ import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.ForgeRegistries;
-
-import com.underground.undergroundmod.render.*;
-import com.underground.undergroundmod.item.*;
-import com.underground.undergroundmod.monster.*;
-import com.underground.undergroundmod.monster.render.RenderSkyRoamer;
-import com.underground.undergroundmod.monster.entity.*;
-import com.underground.undergroundmod.entity.*;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.codehaus.plexus.util.xml.pull.EntityReplacementMap;
-
-import java.util.stream.Collectors;
-
-import javax.swing.text.html.parser.Entity;
-import javax.xml.stream.events.EntityReference;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod("undergroundmod")
@@ -105,6 +95,7 @@ public class UnderGroundMod
     public static Item Magazine =new Magazine(new Item.Properties().group(tabUnder).defaultMaxDamage(384)).setRegistryName(new ResourceLocation(MODID,"magazine"));
     public static Item SpawnSupRob =new ItemSpawnEgg(SUPROB,9999999,9999999,(new Item.Properties().group(tabUnder).defaultMaxDamage(384))).setRegistryName(new ResourceLocation(MODID, "spawnsuprob"));
     public static Item Circuit =new Circuit(new Item.Properties().group(tabUnder).maxStackSize(64)).setRegistryName(new ResourceLocation(MODID,"circuit"));
+    public static Item Wrench = new Wrench(new Item.Properties().group(tabUnder).defaultMaxDamage(384)).setRegistryName(new ResourceLocation(MODID, "wrench"));
     
     //Entity変更
 	public static final ResourceLocation ENTITIES_SKYROAMER = LootTableList.register(new ResourceLocation(ModIdHolder.MODID,"inject/skyroamer"));
@@ -185,7 +176,8 @@ public class UnderGroundMod
         			AutomaticRifle,
         			Magazine,
         			SpawnSupRob,
-        			Circuit
+        			Circuit,
+        			Wrench
         	);
         }
        
