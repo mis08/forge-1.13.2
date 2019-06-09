@@ -10,6 +10,7 @@ import com.underground.undergroundmod.monster.entity.EntitySkyRoamer;
 
 import net.minecraft.client.player.inventory.ContainerLocalMenu;
 import net.minecraft.entity.EntityAgeable;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.IRangedAttackMob;
@@ -19,6 +20,8 @@ import net.minecraft.entity.ai.EntityAIFollowOwner;
 import net.minecraft.entity.ai.EntityAILookIdle;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.monster.EntityCreeper;
+import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -86,6 +89,9 @@ public class EntitySupRob extends EntityTameable implements IRangedAttackMob,IIn
 		this.tasks.addTask(3, new EntityAIWatchClosest(this, EntityPlayer.class,8.0F));
 		this.tasks.addTask(4, new EntityAILookIdle(this));
 		this.targetTasks.addTask(1, new EntityAINearestAttackableTarget<>(this,EntitySkyRoamer.class,true));
+		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(this, EntityLiving.class, 10, false, true, (p_210132_0_) -> {
+			return p_210132_0_ != null && IMob.VISIBLE_MOB_SELECTOR.test(p_210132_0_) && !(p_210132_0_ instanceof EntityCreeper);
+		}));
 	}
 	
 	@Override
@@ -116,8 +122,8 @@ public class EntitySupRob extends EntityTameable implements IRangedAttackMob,IIn
 	protected void registerAttributes() {
 		super.registerAttributes();
 		this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue((double)0.3F);
-		this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(50.0D);
-		this.getAttributeMap().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(2.0D);
+		this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(100.0D);
+		this.getAttributeMap().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(4.0D);
 	    
 	}
 	
@@ -125,12 +131,7 @@ public class EntitySupRob extends EntityTameable implements IRangedAttackMob,IIn
 	   
 	   public void setTamed(boolean tamed) {
       super.setTamed(tamed);
-      if (tamed) {
-         this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(20.0D);
-      } else {
-         this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(8.0D);
-      }
-
+      this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(100.0D);
       this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(4.0D);
    }
 	
@@ -168,12 +169,10 @@ public class EntitySupRob extends EntityTameable implements IRangedAttackMob,IIn
 	             this.setAttackTarget((EntityLivingBase)null);
 	          }
 	       } else if (item == UnderGroundMod.RobotConnecter) {
-	          if (!player.abilities.isCreativeMode) {
-	             itemstack.shrink(1);
-	          }
+
 
 	          if (!this.world.isRemote) {
-	             if (this.rand.nextInt(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, player)) {
+	             if (!net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, player)) {
 	                this.setTamedBy(player);
 	                this.navigator.clearPath();
 	                this.setAttackTarget((EntityLivingBase)null);
@@ -206,6 +205,10 @@ public class EntitySupRob extends EntityTameable implements IRangedAttackMob,IIn
 	         this.headRotationCourse += (1.0F - this.headRotationCourse) * 0.4F;
 	      } else {
 	         this.headRotationCourse += (0.0F - this.headRotationCourse) * 0.4F;
+	      }
+	      
+	      if(this.getHealth()<20) {
+	    	  this.playTameEffect(false);
 	      }
 
 	}

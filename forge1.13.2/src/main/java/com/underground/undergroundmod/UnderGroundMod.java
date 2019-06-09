@@ -18,6 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Item.Properties;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.world.gen.feature.structure.StructureIO;
 import net.minecraft.world.storage.loot.LootEntry;
 import net.minecraft.world.storage.loot.LootEntryTable;
 import net.minecraft.world.storage.loot.LootPool;
@@ -32,7 +33,9 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
+import net.minecraftforge.fml.common.IWorldGenerator;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
@@ -40,12 +43,15 @@ import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.ForgeRegistry;
 
 import com.underground.undergroundmod.render.*;
+import com.underground.undergroundmod.structures.AddBiomeFeature;
 import com.underground.undergroundmod.item.*;
 import com.underground.undergroundmod.monster.*;
 import com.underground.undergroundmod.monster.render.RenderSkyRoamer;
 import com.underground.undergroundmod.monster.entity.*;
+import com.google.common.base.Joiner.MapJoiner;
 import com.underground.undergroundmod.entity.*;
 
 import org.apache.logging.log4j.LogManager;
@@ -76,6 +82,9 @@ public class UnderGroundMod
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
+        
+        
+        
     }
     
        //tab登録
@@ -129,6 +138,9 @@ public class UnderGroundMod
     	//MobEntity設定
         AddEntity.registerPlacementTypes();
         AddEntity.registerEntitySpawns();
+        
+        AddBiomeFeature.add();
+        
         
         
 
@@ -216,10 +228,7 @@ public class UnderGroundMod
         			R2D2Scream,
         			R2D2Beap
         			);
-        	
-        	
         }
-       
    
     }
 }
