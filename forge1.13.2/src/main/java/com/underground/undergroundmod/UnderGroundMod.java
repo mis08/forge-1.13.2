@@ -4,6 +4,9 @@ package com.underground.undergroundmod;
 import static com.underground.undergroundmod.ModIdHolder.MODID;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockAnvil;
+import net.minecraft.block.SoundType;
+import net.minecraft.block.material.Material;
 import net.minecraft.client.audio.Sound;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.monster.EntityCreeper;
@@ -12,6 +15,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemSpawnEgg;
 import net.minecraft.item.ItemStack;
@@ -52,6 +56,7 @@ import com.underground.undergroundmod.monster.*;
 import com.underground.undergroundmod.monster.render.RenderSkyRoamer;
 import com.underground.undergroundmod.monster.entity.*;
 import com.google.common.base.Joiner.MapJoiner;
+import com.underground.undergroundmod.block.testblock;
 import com.underground.undergroundmod.entity.*;
 
 import org.apache.logging.log4j.LogManager;
@@ -102,7 +107,7 @@ public class UnderGroundMod
 	public static EntityType<?> EntityBullet =EntityType.Builder.create(EntityBullet.class,EntityBullet::new).tracker(60, 1, true).build(MODID+":entitybullet").setRegistryName(new ResourceLocation(MODID,"entitybullet"));
 	public static EntityType<?> EntitySupRob = EntityType.Builder.create(EntitySupRob.class,EntitySupRob::new).tracker(60,1,true).build(MODID+":entitysuprob").setRegistryName(new ResourceLocation(MODID,"entitysuprob"));
 	
-	
+	//スポーンエッグ用登録処理
 	public static EntityType<EntitySupRob> SUPROB = EntityType.register("suprob",EntityType.Builder.create(EntitySupRob.class, EntitySupRob::new));
     
     //Itemプロパティ作成
@@ -116,8 +121,13 @@ public class UnderGroundMod
     public static Item Circuit =new Circuit(new Item.Properties().group(tabUnder).maxStackSize(64)).setRegistryName(new ResourceLocation(MODID,"circuit"));
     public static Item RobotConnecter =new RobotConnecter(new Item.Properties().group(tabUnder).defaultMaxDamage(384)).setRegistryName(new ResourceLocation(MODID,"robotconnecter"));
     
+
     
-    //Entity変更
+    //Block作成
+    public static Block testBlock = new testblock(Block.Properties.create(Material.ROCK).hardnessAndResistance(2.5f,2.5f).sound(SoundType.STONE)).setRegistryName(MODID,"testblock");
+    public static Item TestBlock =new ItemBlock(testBlock,new Item.Properties().group(tabUnder)).setRegistryName(MODID,"testblock");
+    		
+    //Entityドロップ変更
 	public static final ResourceLocation ENTITIES_SKYROAMER = LootTableList.register(new ResourceLocation(ModIdHolder.MODID,"inject/skyroamer"));
 	public static final ResourceLocation ENTITIES_CREEPER = LootTableList.register(new ResourceLocation(ModIdHolder.MODID,"inject/more_creeper"));
 	public static final ResourceLocation SPAWN_BONUS_CHEST = LootTableList.register(new ResourceLocation(ModIdHolder.MODID,"inject/spawn_bonus_chest"));
@@ -183,8 +193,11 @@ public class UnderGroundMod
     @Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.MOD)
     public static class RegistryEvents {
         @SubscribeEvent
-        public static void onBlocksRegistry(final RegistryEvent.Register<Block> blockRegistryEvent) {
-            // register a new block here
+        public static void onBlocksRegistry(final RegistryEvent.Register<Block> blockRegister) {
+        	blockRegister.getRegistry().registerAll(
+        			testBlock
+        			);
+        	
             LOGGER.info("HELLO from Register Block");
         }
         
@@ -200,8 +213,12 @@ public class UnderGroundMod
         			Magazine,
         			SpawnSupRob,
         			Circuit,
-        			RobotConnecter
-        	);
+        			RobotConnecter,
+        			TestBlock
+        			
+        			  	);
+      
+        	
         }
        
         @SubscribeEvent
