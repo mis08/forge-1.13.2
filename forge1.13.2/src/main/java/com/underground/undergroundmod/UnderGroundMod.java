@@ -56,6 +56,7 @@ import com.underground.undergroundmod.monster.*;
 import com.underground.undergroundmod.monster.render.RenderSkyRoamer;
 import com.underground.undergroundmod.monster.entity.*;
 import com.google.common.base.Joiner.MapJoiner;
+import com.underground.undergroundmod.block.BlockAlloy;
 import com.underground.undergroundmod.block.testblock;
 import com.underground.undergroundmod.entity.*;
 
@@ -123,14 +124,12 @@ public class UnderGroundMod
     
 
     
-    //Block作成
+    //Block作成 ItemRegisterにも登録のこと
     public static Block testBlock = new testblock(Block.Properties.create(Material.ROCK).hardnessAndResistance(2.5f,2.5f).sound(SoundType.STONE)).setRegistryName(MODID,"testblock");
-    public static Item TestBlock =new ItemBlock(testBlock,new Item.Properties().group(tabUnder)).setRegistryName(MODID,"testblock");
+    public static Block BlockAlloy =new BlockAlloy(Block.Properties.create(Material.ROCK).hardnessAndResistance(50.0F,1200.0F).sound(SoundType.STONE)).setRegistryName(MODID,"blockalloy");
     		
     //Entityドロップ変更
 	public static final ResourceLocation ENTITIES_SKYROAMER = LootTableList.register(new ResourceLocation(ModIdHolder.MODID,"inject/skyroamer"));
-	public static final ResourceLocation ENTITIES_CREEPER = LootTableList.register(new ResourceLocation(ModIdHolder.MODID,"inject/more_creeper"));
-	public static final ResourceLocation SPAWN_BONUS_CHEST = LootTableList.register(new ResourceLocation(ModIdHolder.MODID,"inject/spawn_bonus_chest"));
 
 	
 	//Sound作成
@@ -195,7 +194,8 @@ public class UnderGroundMod
         @SubscribeEvent
         public static void onBlocksRegistry(final RegistryEvent.Register<Block> blockRegister) {
         	blockRegister.getRegistry().registerAll(
-        			testBlock
+//        			testBlock,
+        			BlockAlloy
         			);
         	
             LOGGER.info("HELLO from Register Block");
@@ -214,7 +214,8 @@ public class UnderGroundMod
         			SpawnSupRob,
         			Circuit,
         			RobotConnecter,
-        			TestBlock
+//        			Block2Item.set(testBlock),
+        			Block2Item.set(BlockAlloy)
         			
         			  	);
       
