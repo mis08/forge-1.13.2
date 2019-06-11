@@ -17,8 +17,12 @@ import net.minecraft.entity.IRangedAttackMob;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIAttackRanged;
 import net.minecraft.entity.ai.EntityAIFollowOwner;
+import net.minecraft.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.entity.ai.EntityAILookIdle;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
+import net.minecraft.entity.ai.EntityAIOwnerHurtByTarget;
+import net.minecraft.entity.ai.EntityAIOwnerHurtTarget;
+import net.minecraft.entity.ai.EntityAIWanderAvoidWater;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.IMob;
@@ -84,14 +88,19 @@ public class EntitySupRob extends EntityTameable implements IRangedAttackMob,IIn
 	}
 	
 	protected void initEntityAI() {
-		this.tasks.addTask(1, new EntityAIFollowOwner(this, 1.0D, 6.0F,2.0F));
-		this.tasks.addTask(2, new EntityAIAttackRanged(this,1.0D,1,5,20.0F));
+		this.tasks.addTask(1, new EntityAIFollowOwner(this, 1.0D, 10.0F,2.0F));
+		this.tasks.addTask(2, new EntityAIAttackRanged(this,1.0D,1,5,30.0F));
 		this.tasks.addTask(3, new EntityAIWatchClosest(this, EntityPlayer.class,8.0F));
 		this.tasks.addTask(4, new EntityAILookIdle(this));
-		this.targetTasks.addTask(1, new EntityAINearestAttackableTarget<>(this,EntitySkyRoamer.class,true));
-		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(this, EntityLiving.class, 10, false, true, (p_210132_0_) -> {
+		this.tasks.addTask(5, new EntityAIWanderAvoidWater(this, 1.0D));
+		this.targetTasks.addTask(1, new EntityAIOwnerHurtByTarget(this));
+		this.targetTasks.addTask(2, new EntityAIOwnerHurtTarget(this));
+		this.targetTasks.addTask(3, new EntityAIHurtByTarget(this, true));
+		this.targetTasks.addTask(4, new EntityAINearestAttackableTarget<>(this,EntitySkyRoamer.class,true));
+		this.targetTasks.addTask(5, new EntityAINearestAttackableTarget<>(this, EntityLiving.class, 10, false, true, (p_210132_0_) -> {
 			return p_210132_0_ != null && IMob.VISIBLE_MOB_SELECTOR.test(p_210132_0_) && !(p_210132_0_ instanceof EntityCreeper);
 		}));
+		
 	}
 	
 	@Override
@@ -243,7 +252,7 @@ public class EntitySupRob extends EntityTameable implements IRangedAttackMob,IIn
 				if(itemstack.getItem() instanceof Magazine) {
 					EntityBullet entityarrow = this.getbullet(distanceFactor);
 					double d0 = target.posX - this.posX;
-					double d1 = target.getBoundingBox().minY + (double)(target.height / 3.0F) - entityarrow.posY;
+					double d1 = target.getBoundingBox().minY + (double)(target.height / 3.0F) - (entityarrow.posY+1D);
 					double d2 = target.posZ - this.posZ;
 					double d3 = (double)MathHelper.sqrt(d0 * d0 + d2 * d2);
 					entityarrow.shoot(d0, d1 + d3 * (double)0.2F, d2, 3 * 3.0F,1.0F);

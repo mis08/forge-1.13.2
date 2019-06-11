@@ -23,14 +23,14 @@ import net.minecraft.world.World;
 
 public class EntityBullet extends EntityArrow{
 
-	private int xTile;
-	private int yTile;
-	private int zTile;
-	private IBlockState inBlockState;
+	protected int xTile;
+	protected int yTile;
+	protected int zTile;
+	protected IBlockState inBlockState;
 	private int knockbackStrength;
 	private int ticksInAir;
-	private World worldIn;
-	private double damage;
+	protected World worldIn;
+	protected double damage;
 
 
 	public EntityBullet(EntityType<?> type, World worldIn) {
@@ -60,13 +60,15 @@ public class EntityBullet extends EntityArrow{
 
     public EntityBullet(EntityType<?> type, EntityLivingBase shooter, World worldIn)
     {
-        this(type, shooter.posX, shooter.posY + (double)shooter.getEyeHeight() - 0.10000000149011612D, shooter.posZ,worldIn);
+        this(type, shooter.posX + 0.7D, shooter.posY + (double)shooter.getEyeHeight() - 0.10000000149011612D, shooter.posZ,worldIn);
         this.func_212361_a(shooter);
         this.worldIn=worldIn;
 
         if (shooter instanceof EntityPlayer)
         {
             this.pickupStatus = EntityBullet.PickupStatus.ALLOWED;
+        }else if(shooter instanceof EntitySupRob) {
+        	this.setPosition(shooter.posX, shooter.posY + 1D, shooter.posZ);
         }
     }
 

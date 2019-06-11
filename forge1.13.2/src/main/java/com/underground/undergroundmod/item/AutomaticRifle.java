@@ -3,6 +3,7 @@ package com.underground.undergroundmod.item;
 import com.underground.undergroundmod.UnderGroundMod;
 import com.underground.undergroundmod.entity.EntityBullet;
 import com.underground.undergroundmod.entity.EntityExpArrow;
+import com.underground.undergroundmod.entity.EntityLaser;
 import com.underground.undergroundmod.entity.EntityTippedExpArrow;
 import com.underground.undergroundmod.item.Magazine;
 
@@ -112,9 +113,11 @@ public class AutomaticRifle extends Item{
 	}
 
 	public void GunFire(EntityPlayer playerIn,Magazine magazine) {
-		if(launchSpeed>=2) {
+		//本来は２
+		if(launchSpeed>=20) {
 			World worldIn = playerIn.world;
-			EntityBullet bullet =magazine.createBullet(worldIn, playerIn);
+//			EntityBullet bullet =magazine.createBullet(worldIn, playerIn);
+			EntityLaser bullet =new EntityLaser(worldIn, playerIn);
 			bullet.shoot(playerIn,playerIn.rotationPitch, playerIn.rotationYaw, 0.0F, 3 * 3.0F, 1.0F);
 
 			worldIn.spawnEntity(bullet);

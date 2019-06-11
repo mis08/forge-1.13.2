@@ -4,70 +4,43 @@ package com.underground.undergroundmod;
 import static com.underground.undergroundmod.ModIdHolder.MODID;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockAnvil;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.audio.Sound;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.monster.EntityCreeper;
-import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemSpawnEgg;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Item.Properties;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.world.gen.feature.structure.StructureIO;
-import net.minecraft.world.storage.loot.LootEntry;
-import net.minecraft.world.storage.loot.LootEntryTable;
-import net.minecraft.world.storage.loot.LootPool;
 import net.minecraft.world.storage.loot.LootTableList;
-import net.minecraft.world.storage.loot.RandomValueRange;
-import net.minecraft.world.storage.loot.conditions.LootCondition;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.ToolType;
-import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
-import net.minecraftforge.fml.common.IWorldGenerator;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.ForgeRegistry;
 
 import com.underground.undergroundmod.render.*;
 import com.underground.undergroundmod.structures.AddBiomeFeature;
 import com.underground.undergroundmod.item.*;
-import com.underground.undergroundmod.monster.*;
-import com.underground.undergroundmod.monster.render.RenderSkyRoamer;
 import com.underground.undergroundmod.monster.entity.*;
-import com.google.common.base.Joiner.MapJoiner;
 import com.underground.undergroundmod.block.BlockAlloy;
 import com.underground.undergroundmod.block.testblock;
 import com.underground.undergroundmod.entity.*;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codehaus.plexus.util.xml.pull.EntityReplacementMap;
 
 import java.util.stream.Collectors;
 
-import javax.swing.text.html.parser.Entity;
-import javax.xml.stream.events.EntityReference;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod("undergroundmod")
@@ -107,7 +80,7 @@ public class UnderGroundMod
 	public static EntityType<?> EntitySkyRoamer = EntityType.Builder.create(EntitySkyRoamer.class,EntitySkyRoamer::new).tracker(40, 5, true).build(MODID+":entityskyroamer").setRegistryName(new ResourceLocation(MODID,"entityskyroamer"));
 	public static EntityType<?> EntityBullet =EntityType.Builder.create(EntityBullet.class,EntityBullet::new).tracker(60, 1, true).build(MODID+":entitybullet").setRegistryName(new ResourceLocation(MODID,"entitybullet"));
 	public static EntityType<?> EntitySupRob = EntityType.Builder.create(EntitySupRob.class,EntitySupRob::new).tracker(60,1,true).build(MODID+":entitysuprob").setRegistryName(new ResourceLocation(MODID,"entitysuprob"));
-	
+	public static EntityType<?> EntityLaser = EntityType.Builder.create(EntityLaser.class, EntityLaser::new).tracker(15, 1, true).build(MODID+":entitylaser").setRegistryName(new ResourceLocation(MODID,"entitylaser"));	
 	//スポーンエッグ用登録処理
 	public static EntityType<EntitySupRob> SUPROB = EntityType.register("suprob",EntityType.Builder.create(EntitySupRob.class, EntitySupRob::new));
     
