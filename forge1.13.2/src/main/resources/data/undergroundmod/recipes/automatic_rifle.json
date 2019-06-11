@@ -5,13 +5,18 @@
         "  X"
     ],
     "key":{
-      "X":{
-     "item": "minecraft:iron_block"
-      },
-     "Y":{
-     "item": "minecraft:oak_log"
-      }
-    },
+        "X":{
+        "item": "minecraft:iron_block"
+        },
+        "Y":[
+        {"item": "minecraft:oak_log"},
+        {"item":"minecraft:spruce_log"},
+        {"item":"minecraft:birch_log"},
+        {"item":"minecraft:jungle_log"},
+        {"item":"minecraft:acacia_log"},
+        {"item":"minecraft:dark_oak_log"}
+        ]
+        },
     "result":{
         "item": "undergroundmod:automaticrifle"
     }

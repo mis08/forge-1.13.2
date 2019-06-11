@@ -21,7 +21,6 @@ import net.minecraft.world.World;
 
 public class Itemtest extends Item{
 	
-	public EntityPlayer playerIn;
 
 	public Itemtest(Properties properties) {
 		super(properties);
@@ -32,8 +31,7 @@ public class Itemtest extends Item{
 	
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
-		// TODO 自動生成されたメソッド・スタブ
-		this.playerIn=playerIn;
+		
 		return super.onItemRightClick(worldIn, playerIn, handIn);
 
 	}
@@ -44,7 +42,6 @@ public class Itemtest extends Item{
 			EntityLivingBase entityLiving) {
 		// TODO 自動生成されたメソッド・スタブ
 		
-		sky.spawnEntity(worldIn, stack, playerIn, pos, true, true);
 		return super.onBlockDestroyed(stack, worldIn, state, pos, entityLiving);
 		
 		

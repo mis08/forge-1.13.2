@@ -7,7 +7,9 @@
   "item.undergroundmod.automaticrifle":"AuntomaticRifle",
   "item.undergroundmod.magazine":"Magazine",
   "item.undergroundmod.spawnsuprob":"SupRob",
+  "item.undergroundmod.robotconnecter":"RobotConnecter",
+  "item.undergroundmod.circuit":"Circuit",
   "entity.minecraft.skyroamer":"SkyRoamer",
-  "entity.minecraft.spurob":"SupRob"
+  "entity.undergroundmod.entitysuprob":"SupRob"
 
 }
