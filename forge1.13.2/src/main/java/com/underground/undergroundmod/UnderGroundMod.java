@@ -34,23 +34,17 @@ import net.minecraft.item.ItemSpawnEgg;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-<<<<<<< HEAD
-=======
 import net.minecraft.world.gen.feature.structure.StructureIO;
 import net.minecraft.world.storage.loot.LootEntry;
 import net.minecraft.world.storage.loot.LootEntryTable;
 import net.minecraft.world.storage.loot.LootPool;
->>>>>>> branch 'Kento' of https://github.com/mis08/forge-1.13.2.git
 import net.minecraft.world.storage.loot.LootTableList;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
-<<<<<<< HEAD
-=======
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.IWorldGenerator;
->>>>>>> branch 'Kento' of https://github.com/mis08/forge-1.13.2.git
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -59,8 +53,6 @@ import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-<<<<<<< HEAD
-=======
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
 
@@ -81,7 +73,6 @@ import java.util.stream.Collectors;
 
 import javax.swing.text.html.parser.Entity;
 import javax.xml.stream.events.EntityReference;
->>>>>>> branch 'Kento' of https://github.com/mis08/forge-1.13.2.git
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod("undergroundmod")
@@ -134,12 +125,9 @@ public class UnderGroundMod
     public static Item Magazine =new Magazine(new Item.Properties().group(tabUnder).defaultMaxDamage(384)).setRegistryName(new ResourceLocation(MODID,"magazine"));
     public static Item SpawnSupRob =new ItemSpawnEgg(SUPROB,9999999,9999999,(new Item.Properties().group(tabUnder).defaultMaxDamage(384))).setRegistryName(new ResourceLocation(MODID, "spawnsuprob"));
     public static Item Circuit =new Circuit(new Item.Properties().group(tabUnder).maxStackSize(64)).setRegistryName(new ResourceLocation(MODID,"circuit"));
-<<<<<<< HEAD
     public static Item Wrench = new Wrench(new Item.Properties().group(tabUnder).defaultMaxDamage(384)).setRegistryName(new ResourceLocation(MODID, "wrench"));
-=======
     public static Item RobotConnecter =new RobotConnecter(new Item.Properties().group(tabUnder).defaultMaxDamage(384)).setRegistryName(new ResourceLocation(MODID,"robotconnecter"));
     
->>>>>>> branch 'Kento' of https://github.com/mis08/forge-1.13.2.git
     
     //Entity変更
 	public static final ResourceLocation ENTITIES_SKYROAMER = LootTableList.register(new ResourceLocation(ModIdHolder.MODID,"inject/skyroamer"));
@@ -224,11 +212,8 @@ public class UnderGroundMod
         			Magazine,
         			SpawnSupRob,
         			Circuit,
-<<<<<<< HEAD
-        			Wrench
-=======
+        			Wrench,
         			RobotConnecter
->>>>>>> branch 'Kento' of https://github.com/mis08/forge-1.13.2.git
         	);
         }
        
