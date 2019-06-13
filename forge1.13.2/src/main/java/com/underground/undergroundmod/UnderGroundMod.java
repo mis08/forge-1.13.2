@@ -1,7 +1,28 @@
 package com.underground.undergroundmod;
 
 
-import static com.underground.undergroundmod.ModIdHolder.MODID;
+import static com.underground.undergroundmod.ModIdHolder.*;
+
+import java.util.stream.Collectors;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.underground.undergroundmod.entity.AddEntity;
+import com.underground.undergroundmod.entity.EntityBullet;
+import com.underground.undergroundmod.entity.EntityExpArrow;
+import com.underground.undergroundmod.entity.EntitySupRob;
+import com.underground.undergroundmod.entity.EntityTippedExpArrow;
+import com.underground.undergroundmod.item.AutomaticRifle;
+import com.underground.undergroundmod.item.Circuit;
+import com.underground.undergroundmod.item.ExpArrow;
+import com.underground.undergroundmod.item.ExpBow;
+import com.underground.undergroundmod.item.Itemtest;
+import com.underground.undergroundmod.item.Magazine;
+import com.underground.undergroundmod.item.SpawnSkyRoamer;
+import com.underground.undergroundmod.item.Wrench;
+import com.underground.undergroundmod.monster.entity.EntitySkyRoamer;
+import com.underground.undergroundmod.render.AddRender;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
@@ -77,9 +98,9 @@ public class UnderGroundMod
     //Entity作成
     public static EntityType<?> EntityExpArrow =EntityType.Builder.create(EntityExpArrow.class,EntityExpArrow::new).tracker(60, 5, true).build(MODID+":entityexparrow").setRegistryName(new ResourceLocation( MODID,"entityexparrow"));
 	public static EntityType<?> EntityTippedExpArrow = EntityType.Builder.create(EntityTippedExpArrow.class,EntityTippedExpArrow::new).tracker(60,5,true).build(MODID+":entitytippedexparrow").setRegistryName(new ResourceLocation(MODID,"entitytippedexparrow"));
-	public static EntityType<?> EntitySkyRoamer = EntityType.Builder.create(EntitySkyRoamer.class,EntitySkyRoamer::new).tracker(40, 5, true).build(MODID+":entityskyroamer").setRegistryName(new ResourceLocation(MODID,"entityskyroamer"));
+	public static EntityType<?> EntitySkyRoamer = EntityType.Builder.create(EntitySkyRoamer.class,EntitySkyRoamer::new).tracker(30, 5, true).build(MODID+":entityskyroamer").setRegistryName(new ResourceLocation(MODID,"entityskyroamer"));
 	public static EntityType<?> EntityBullet =EntityType.Builder.create(EntityBullet.class,EntityBullet::new).tracker(60, 1, true).build(MODID+":entitybullet").setRegistryName(new ResourceLocation(MODID,"entitybullet"));
-	public static EntityType<?> EntitySupRob = EntityType.Builder.create(EntitySupRob.class,EntitySupRob::new).tracker(60,1,true).build(MODID+":entitysuprob").setRegistryName(new ResourceLocation(MODID,"entitysuprob"));
+	public static EntityType<?> EntitySupRob = EntityType.Builder.create(EntitySupRob.class,EntitySupRob::new).tracker(60,5,true).build(MODID+":entitysuprob").setRegistryName(new ResourceLocation(MODID,"entitysuprob"));
 	public static EntityType<?> EntityLaser = EntityType.Builder.create(EntityLaser.class, EntityLaser::new).tracker(15, 1, true).build(MODID+":entitylaser").setRegistryName(new ResourceLocation(MODID,"entitylaser"));	
 	//スポーンエッグ用登録処理
 	public static EntityType<EntitySupRob> SUPROB = EntityType.register("suprob",EntityType.Builder.create(EntitySupRob.class, EntitySupRob::new));
@@ -93,6 +114,7 @@ public class UnderGroundMod
     public static Item Magazine =new Magazine(new Item.Properties().group(tabUnder).defaultMaxDamage(384)).setRegistryName(new ResourceLocation(MODID,"magazine"));
     public static Item SpawnSupRob =new ItemSpawnEgg(SUPROB,9999999,9999999,(new Item.Properties().group(tabUnder).defaultMaxDamage(384))).setRegistryName(new ResourceLocation(MODID, "spawnsuprob"));
     public static Item Circuit =new Circuit(new Item.Properties().group(tabUnder).maxStackSize(64)).setRegistryName(new ResourceLocation(MODID,"circuit"));
+    public static Item Wrench = new Wrench(new Item.Properties().group(tabUnder).defaultMaxDamage(384)).setRegistryName(new ResourceLocation(MODID, "wrench"));
     public static Item RobotConnecter =new RobotConnecter(new Item.Properties().group(tabUnder).defaultMaxDamage(384)).setRegistryName(new ResourceLocation(MODID,"robotconnecter"));
     
 
@@ -188,11 +210,9 @@ public class UnderGroundMod
         			Circuit,
         			RobotConnecter,
 //        			Block2Item.set(testBlock),
-        			Block2Item.set(BlockAlloy)
-        			
-        			  	);
-      
-        	
+        			Block2Item.set(BlockAlloy),
+        			Wrench
+        			);
         }
        
         @SubscribeEvent
