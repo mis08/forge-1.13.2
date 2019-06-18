@@ -40,11 +40,13 @@ public class AddEntity {
 	
 	//Entity宣言
 	public static  EntityType<EntitySkyRoamer> SKYROAMER;
+	public static EntityType<EntityLaser> LAZER;
 	public static EntityType<EntitySupRob> SUPROB = EntityType.register("suprob",EntityType.Builder.create(EntitySupRob.class, EntitySupRob::new));
 	
 		//Entity登録
 	public static void entityTypeRegister() {
 		SKYROAMER = EntityType.register("skyroamer",EntityType.Builder.create(EntitySkyRoamer.class, EntitySkyRoamer::new));
+		LAZER=EntityType.register("laser",EntityType.Builder.create(EntityLaser.class, EntityLaser::new));
 
 	}
 	

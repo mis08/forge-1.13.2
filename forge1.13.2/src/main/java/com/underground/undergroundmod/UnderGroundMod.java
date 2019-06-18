@@ -69,6 +69,7 @@ public class UnderGroundMod
 {
     // Directly reference a log4j logger.
     private static final Logger LOGGER = LogManager.getLogger();
+    public static final Logger Debag= LogManager.getLogger();
 
     public UnderGroundMod() {
         // Register the setup method for modloading
@@ -102,7 +103,7 @@ public class UnderGroundMod
 	public static EntityType<?> EntityBullet =EntityType.Builder.create(EntityBullet.class,EntityBullet::new).tracker(60, 1, true).build(MODID+":entitybullet").setRegistryName(new ResourceLocation(MODID,"entitybullet"));
 	public static EntityType<?> EntitySupRob = EntityType.Builder.create(EntitySupRob.class,EntitySupRob::new).tracker(60,1,true).build(MODID+":entitysuprob").setRegistryName(new ResourceLocation(MODID,"entitysuprob"));
 	public static EntityType<?> EntityLaser = EntityType.Builder.create(EntityLaser.class, EntityLaser::new).tracker(15, 5, true).build(MODID+":entitylaser").setRegistryName(new ResourceLocation(MODID,"entitylaser"));	
-	//スポーンエッグ用登録処理
+	//スポーンエッグ用EntityType登録処理
 	public static EntityType<EntitySupRob> SUPROB = EntityType.register("suprob",EntityType.Builder.create(EntitySupRob.class, EntitySupRob::new));
     
     //Itemプロパティ作成
@@ -222,9 +223,10 @@ public class UnderGroundMod
         			EntityTippedExpArrow,
         			EntitySkyRoamer,
         			EntityBullet,
-        			EntitySupRob
+        			EntitySupRob,
+        			EntityLaser
         			);
-        	//EntityMonsterタイプ登録
+        	//EntityType登録
         	AddEntity.entityTypeRegister();
         } 
         

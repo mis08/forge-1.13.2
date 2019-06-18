@@ -118,7 +118,8 @@ public class AutomaticRifle extends Item{
 			World worldIn = playerIn.world;
 //			EntityBullet bullet =magazine.createBullet(worldIn, playerIn);
 			EntityLaser bullet =new EntityLaser(worldIn, playerIn);
-			bullet.shoot(playerIn,playerIn.rotationPitch, playerIn.rotationYaw, 0.0F, 3 * 3.0F, 1.0F);
+			bullet.shoot(playerIn,playerIn.rotationPitch, playerIn.rotationYaw, 0.0F, 0.7F, 1.0F);
+//			bullet.shoot(playerIn,playerIn.rotationPitch, playerIn.rotationYaw, 0.0F, 3 * 3.0F, 1.0F);
 
 			worldIn.spawnEntity(bullet);
 			worldIn.playSound((EntityPlayer)null, playerIn.posX, playerIn.posY, playerIn.posZ, UnderGroundMod.GunSound, SoundCategory.RECORDS, 1.0F, 1.0F / (random.nextFloat() * 0.4F + 1.2F) + 3 * 0.5F);
