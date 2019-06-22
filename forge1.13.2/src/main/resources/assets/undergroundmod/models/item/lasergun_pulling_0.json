@@ -1,0 +1,6 @@
+{
+    "parent":"undergroundmod:item/lasergun",
+    "textures":{
+        "layer0":"undergroundmod:items/lasergun"
+    }
+}

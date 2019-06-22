@@ -1,0 +1,12 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "undergroundmod:items/powercell/powercell"
+    },
+         "overrides": [
+        { "predicate": {"damage": 0.2}, "model":"undergroundmod:item/powercell/powercell_d1"},
+        {"predicate":{"damage":0.4},"model":"undergroundmod:item/powercell/powercell_d2"},
+        {"predicate":{"damage":0.6},"model":"undergroundmod:item/powercell/powercell_d3"},
+        {"predicate":{"damage":0.8},"model":"undergroundmod:item/powercell/powercell_d4"}
+    ]
+}

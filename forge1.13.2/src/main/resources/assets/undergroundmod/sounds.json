@@ -5,8 +5,7 @@
       {
         "name": "undergroundmod:gunsound",
         "pitch":0.1,
-        "volume":0.6,
-        "stream":"true"
+        "volume":0.6
       }
     ]
   },
@@ -15,15 +14,15 @@
        "sounds":[
       {
          "name":"undergroundmod:r2d2_flat",
-         "volume":0.6
+         "volume":0.4
       },
      {
          "name":"undergroundmod:r2d2_flat3",
-         "volume":0.6
+         "volume":0.4
       },
       {
           "name":"undergroundmod:r2d2_flat4",
-          "volume":0.6
+          "volume":0.4
       }
       ]
   },
@@ -32,11 +31,11 @@
       "sounds":[
           {
               "name":"undergroundmod:r2d2_flat_beap",
-              "volume":0.6
+              "volume":0.4
           },
           {
               "name":"undergroundmod:r2d2_flat_call2",
-              "volume":0.6
+              "volume":0.4
           }
       ]
   },
@@ -45,6 +44,15 @@
       "sounds":[
           {
               "name":"undergroundmod:r2d2_scream",
+              "volume":0.4
+          }
+      ]
+  },
+  "lasergunsound":{
+      "category":"record",
+      "sounds":[
+          {
+              "name":"undergroundmod:lasergunsound",
               "volume":0.6
           }
       ]

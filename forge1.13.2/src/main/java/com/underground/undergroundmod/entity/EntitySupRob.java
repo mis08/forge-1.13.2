@@ -6,6 +6,7 @@ import javax.annotation.Nullable;
 
 import com.underground.undergroundmod.UnderGroundMod;
 import com.underground.undergroundmod.item.Magazine;
+import com.underground.undergroundmod.item.Wrench;
 import com.underground.undergroundmod.monster.entity.EntitySkyRoamer;
 
 import net.minecraft.client.player.inventory.ContainerLocalMenu;
@@ -118,7 +119,7 @@ public class EntitySupRob extends EntityTameable implements IRangedAttackMob,IIn
 	protected SoundEvent getAmbientSound() {
 		// TODO 自動生成されたメソッド・スタブ
 		
-		return this.isTamed() && this.dataManager.get(DATA_HEALTH_ID) < 10.0F ? UnderGroundMod.R2D2Beap : UnderGroundMod.R2D2flat;
+		return this.isTamed() && this.dataManager.get(DATA_HEALTH_ID) < 50.0F ? UnderGroundMod.R2D2Beap : UnderGroundMod.R2D2flat;
  	}
 	
 	@Override
@@ -134,6 +135,11 @@ public class EntitySupRob extends EntityTameable implements IRangedAttackMob,IIn
 		this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(100.0D);
 		this.getAttributeMap().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(4.0D);
 	    
+	}
+	
+	@Override
+	protected void updateAITasks() {
+		this.dataManager.set(DATA_HEALTH_ID, this.getHealth());
 	}
 	
 
@@ -156,14 +162,14 @@ public class EntitySupRob extends EntityTameable implements IRangedAttackMob,IIn
 	    	  }
 	    	  
 	          if (!itemstack.isEmpty()) {
-	             if (item instanceof ItemFood) {
-	                ItemFood itemfood = (ItemFood)item;
-	                if (itemfood.isMeat() && this.dataManager.get(DATA_HEALTH_ID) < 20.0F) {
+	             if (item instanceof Wrench) {
+	                if (this.dataManager.get(DATA_HEALTH_ID) < 100.0F) {
 	                   if (!player.abilities.isCreativeMode) {
-	                      itemstack.shrink(1);
+	                      itemstack.damageItem(5, player);
 	                   }
 
-	                   this.heal((float)itemfood.getHealAmount(itemstack));
+	                   UnderGroundMod.Debag.info("DATA_HEALTH_ID(Float)"+Float.toString((float)this.dataManager.get(DATA_HEALTH_ID)));
+	                   this.heal(40F);
 	                   return true;
 	                }
 	             }
@@ -186,7 +192,7 @@ public class EntitySupRob extends EntityTameable implements IRangedAttackMob,IIn
 	                this.navigator.clearPath();
 	                this.setAttackTarget((EntityLivingBase)null);
 	                this.aiSit.setSitting(false);
-	                this.setHealth(50.0F);
+	                this.setHealth(100.0F);
 	                this.playTameEffect(true);
 	                this.world.setEntityState(this, (byte)7);
 	             } else {

@@ -60,7 +60,7 @@ public class EntityBullet extends EntityArrow{
 
     public EntityBullet(EntityType<?> type, EntityLivingBase shooter, World worldIn)
     {
-        this(type, shooter.posX + 0.7D, shooter.posY + (double)shooter.getEyeHeight() - 0.10000000149011612D, shooter.posZ,worldIn);
+        this(type, shooter.posX , shooter.posY + (double)shooter.getEyeHeight() - 0.10000000149011612D, shooter.posZ,worldIn);
         this.func_212361_a(shooter);
         this.worldIn=worldIn;
 

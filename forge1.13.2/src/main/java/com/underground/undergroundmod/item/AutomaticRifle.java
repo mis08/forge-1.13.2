@@ -36,7 +36,10 @@ import net.minecraftforge.event.world.NoteBlockEvent.Play;
 import net.minecraftforge.items.wrapper.PlayerOffhandInvWrapper;
 
 public class AutomaticRifle extends Item{
+	//発射速度制御
 	private int launchSpeed;
+	//1tickで二度呼び出されてゴーストEntityが生まれることを防止するフラグ
+	private boolean FireFlag;
 
 
 	public AutomaticRifle(Item.Properties builder) {
@@ -52,17 +55,28 @@ public class AutomaticRifle extends Item{
 			EntityPlayer entityplayer = (EntityPlayer)entityLiving;
 			boolean flag = entityplayer.abilities.isCreativeMode;
 			ItemStack itemstack = this.findAmmo(entityplayer);
-			
-			//弾があるか、クリエイティブモード
-			if(!itemstack.isEmpty() || flag) {
-				if(itemstack.isEmpty()) {
-					itemstack= new ItemStack(UnderGroundMod.Magazine);
+
+			if(FireFlag) {
+				//弾があるか、クリエイティブモード
+				if(!itemstack.isEmpty() || flag) {
+					if(itemstack.isEmpty()) {
+						itemstack= new ItemStack(UnderGroundMod.Magazine);
+					}
+					Magazine magazine =(Magazine)(itemstack.getItem() instanceof Magazine ? itemstack.getItem() : UnderGroundMod.Magazine);
+					if(launchSpeed>3) {
+						GunFire(entityplayer,magazine);
+						itemstack.damageItem(1, entityplayer);
+						launchSpeed=0;
+					}else {
+						launchSpeed++;
+					}
+		
 				}
-				Magazine magazine =(Magazine)(itemstack.getItem() instanceof Magazine ? itemstack.getItem() : UnderGroundMod.Magazine);
-				GunFire(entityplayer,magazine);
-				itemstack.damageItem(1, entityplayer);
+				
+				FireFlag=false;
+			}else {
+				FireFlag=true;
 			}
-			
 			
 			//Rifle側でdamage処理するコード、謎の不具合により凍結
 			/*
@@ -113,20 +127,13 @@ public class AutomaticRifle extends Item{
 	}
 
 	public void GunFire(EntityPlayer playerIn,Magazine magazine) {
-		//本来は２
-		if(launchSpeed>=20) {
 			World worldIn = playerIn.world;
-//			EntityBullet bullet =magazine.createBullet(worldIn, playerIn);
-			EntityLaser bullet =new EntityLaser(worldIn, playerIn);
-			bullet.shoot(playerIn,playerIn.rotationPitch, playerIn.rotationYaw, 0.0F, 0.7F, 1.0F);
-//			bullet.shoot(playerIn,playerIn.rotationPitch, playerIn.rotationYaw, 0.0F, 3 * 3.0F, 1.0F);
+			EntityBullet bullet =magazine.createBullet(worldIn, playerIn);
+			bullet.shoot(playerIn,playerIn.rotationPitch, playerIn.rotationYaw, 0.0F, 3 * 3.0F, 1.0F);
 
 			worldIn.spawnEntity(bullet);
 			worldIn.playSound((EntityPlayer)null, playerIn.posX, playerIn.posY, playerIn.posZ, UnderGroundMod.GunSound, SoundCategory.RECORDS, 1.0F, 1.0F / (random.nextFloat() * 0.4F + 1.2F) + 3 * 0.5F);
-			launchSpeed=0;
-		}else {
-			launchSpeed++;
-		}
+			
 	}
 	
 	protected ItemStack findAmmo(EntityPlayer player) {

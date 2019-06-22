@@ -13,14 +13,6 @@ import com.underground.undergroundmod.entity.EntityBullet;
 import com.underground.undergroundmod.entity.EntityExpArrow;
 import com.underground.undergroundmod.entity.EntitySupRob;
 import com.underground.undergroundmod.entity.EntityTippedExpArrow;
-import com.underground.undergroundmod.item.AutomaticRifle;
-import com.underground.undergroundmod.item.Circuit;
-import com.underground.undergroundmod.item.ExpArrow;
-import com.underground.undergroundmod.item.ExpBow;
-import com.underground.undergroundmod.item.Itemtest;
-import com.underground.undergroundmod.item.Magazine;
-import com.underground.undergroundmod.item.SpawnSkyRoamer;
-import com.underground.undergroundmod.item.Wrench;
 import com.underground.undergroundmod.monster.entity.EntitySkyRoamer;
 import com.underground.undergroundmod.render.AddRender;
 
@@ -34,6 +26,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemSpawnEgg;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Item.Properties;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.storage.loot.LootTableList;
@@ -117,6 +110,8 @@ public class UnderGroundMod
     public static Item Circuit =new Circuit(new Item.Properties().group(tabUnder).maxStackSize(64)).setRegistryName(new ResourceLocation(MODID,"circuit"));
     public static Item Wrench = new Wrench(new Item.Properties().group(tabUnder).defaultMaxDamage(384)).setRegistryName(new ResourceLocation(MODID, "wrench"));
     public static Item RobotConnecter =new RobotConnecter(new Item.Properties().group(tabUnder).defaultMaxDamage(384)).setRegistryName(new ResourceLocation(MODID,"robotconnecter"));
+    public static Item LaserGun = new LaserGun(new Item.Properties().group(tabUnder).defaultMaxDamage(384)).setRegistryName(new ResourceLocation(MODID,"lasergun"));
+    public static Item PowerCell = new PowerCell(new Item.Properties().group(tabUnder).defaultMaxDamage(384)).setRegistryName(new ResourceLocation(MODID,"powercell/powercell"));
 
     
     //Block作成 ItemRegisterにも登録のこと
@@ -132,6 +127,7 @@ public class UnderGroundMod
 	public static final SoundEvent R2D2flat = new SoundEvent(new ResourceLocation(MODID,"r2d2_flat")).setRegistryName(new ResourceLocation(MODID,"r2d2_flat"));
 	public static final SoundEvent R2D2Scream = new SoundEvent(new ResourceLocation(MODID,"r2d2_scream")).setRegistryName(new ResourceLocation(MODID,"r2d2_scream"));
 	public static final SoundEvent R2D2Beap = new SoundEvent(new ResourceLocation(MODID,"r2d2_beap")).setRegistryName(new ResourceLocation(MODID,"r2d2_beap"));
+	public static final SoundEvent LaserGunSound = new SoundEvent(new ResourceLocation(MODID,"lasergunsound")).setRegistryName(new ResourceLocation(MODID,"lasergunsound"));
     
     private void setup(final FMLCommonSetupEvent event)
     {
@@ -143,6 +139,7 @@ public class UnderGroundMod
         AddEntity.registerPlacementTypes();
         AddEntity.registerEntitySpawns();
         
+        //Biome追加
         AddBiomeFeature.add();
         
         
@@ -211,7 +208,9 @@ public class UnderGroundMod
         			RobotConnecter,
 //        			Block2Item.set(testBlock),
         			Block2Item.set(BlockAlloy),
-        			Wrench
+        			Wrench,
+        			LaserGun,
+        			PowerCell
         			);
         }
        
@@ -238,7 +237,8 @@ public class UnderGroundMod
         			GunSound,
         			R2D2flat,
         			R2D2Scream,
-        			R2D2Beap
+        			R2D2Beap,
+        			LaserGunSound
         			);
         }
    
