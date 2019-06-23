@@ -63,12 +63,13 @@ public class AutomaticRifle extends Item{
 						itemstack= new ItemStack(UnderGroundMod.Magazine);
 					}
 					Magazine magazine =(Magazine)(itemstack.getItem() instanceof Magazine ? itemstack.getItem() : UnderGroundMod.Magazine);
-					if(launchSpeed>3) {
+					if(launchSpeed>2) {
 						GunFire(entityplayer,magazine);
+						UnderGroundMod.Debag.info("called GunFire");
 						itemstack.damageItem(1, entityplayer);
 						launchSpeed=0;
 					}else {
-						launchSpeed++;
+						++launchSpeed;
 					}
 		
 				}

@@ -46,8 +46,7 @@ import com.underground.undergroundmod.render.*;
 import com.underground.undergroundmod.structures.AddBiomeFeature;
 import com.underground.undergroundmod.item.*;
 import com.underground.undergroundmod.monster.entity.*;
-import com.underground.undergroundmod.block.BlockAlloy;
-import com.underground.undergroundmod.block.testblock;
+import com.underground.undergroundmod.block.*;
 import com.underground.undergroundmod.entity.*;
 
 import org.apache.logging.log4j.LogManager;
@@ -112,11 +111,13 @@ public class UnderGroundMod
     public static Item RobotConnecter =new RobotConnecter(new Item.Properties().group(tabUnder).defaultMaxDamage(384)).setRegistryName(new ResourceLocation(MODID,"robotconnecter"));
     public static Item LaserGun = new LaserGun(new Item.Properties().group(tabUnder).defaultMaxDamage(384)).setRegistryName(new ResourceLocation(MODID,"lasergun"));
     public static Item PowerCell = new PowerCell(new Item.Properties().group(tabUnder).defaultMaxDamage(384)).setRegistryName(new ResourceLocation(MODID,"powercell/powercell"));
+    public static Item Wand=new Wand(new Item.Properties().group(tabUnder).defaultMaxDamage(384)).setRegistryName(new ResourceLocation(MODID,"wand"));
 
     
     //Block作成 ItemRegisterにも登録のこと
     public static Block testBlock = new testblock(Block.Properties.create(Material.ROCK).hardnessAndResistance(2.5f,2.5f).sound(SoundType.STONE)).setRegistryName(MODID,"testblock");
     public static Block BlockAlloy =new BlockAlloy(Block.Properties.create(Material.ROCK).hardnessAndResistance(50.0F,1200.0F).sound(SoundType.STONE)).setRegistryName(MODID,"blockalloy");
+    public static Block BlockAlloy_Door =new BlockAlloy_Door(Block.Properties.create(Material.ROCK).hardnessAndResistance(50.0F,1200).sound(SoundType.STONE)).setRegistryName(MODID,"blockalloy_door");
     		
     //Entityドロップ変更
 	public static final ResourceLocation ENTITIES_SKYROAMER = LootTableList.register(new ResourceLocation(ModIdHolder.MODID,"inject/skyroamer"));
@@ -187,7 +188,8 @@ public class UnderGroundMod
         public static void onBlocksRegistry(final RegistryEvent.Register<Block> blockRegister) {
         	blockRegister.getRegistry().registerAll(
 //        			testBlock,
-        			BlockAlloy
+        			BlockAlloy,
+        			BlockAlloy_Door
         			);
         	
             LOGGER.info("HELLO from Register Block");
@@ -197,7 +199,7 @@ public class UnderGroundMod
         public static void onItemsRegistry(final RegistryEvent.Register<Item> itemRegister) {
         	//Item登録
         	itemRegister.getRegistry().registerAll(
-        			//test,
+//        			test,
         			ExpArrow,
         			ExpBow,
         			SpawnSkyRoamer,
@@ -208,9 +210,11 @@ public class UnderGroundMod
         			RobotConnecter,
 //        			Block2Item.set(testBlock),
         			Block2Item.set(BlockAlloy),
+        			Block2Item.set(BlockAlloy_Door),
         			Wrench,
         			LaserGun,
-        			PowerCell
+        			PowerCell,
+        			Wand
         			);
         }
        

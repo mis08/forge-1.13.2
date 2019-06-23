@@ -9,6 +9,10 @@
   "item.undergroundmod.spawnsuprob":"SupRob",
   "item.undergroundmod.robotconnecter":"RobotConnecter",
   "item.undergroundmod.circuit":"Circuit",
+  "item.undergroundmod.wand":"整地厨ワンド",
+  "item.undergroundmod.wrench":"Wrench",
+  "item.undergroundmod.lasergun":"LaserGun",
+  "item.undergroundmod.powercell.powercell":"PowerCell",
   "entity.minecraft.skyroamer":"SkyRoamer",
   "entity.undergroundmod.entitysuprob":"SupRob",
   "block.undergroundmod.blockalloy":"合金ブロック"

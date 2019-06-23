@@ -8,50 +8,41 @@ import net.minecraft.command.ICommandSource;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.SoundEvents;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Item;
 import net.minecraft.item.Item.Properties;
-import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.tileentity.CommandBlockBaseLogic;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 
-public class Itemtest extends Item implements ICommandSource{
-	
+public class Wand extends Item implements ICommandSource{
 
-	public Itemtest(Properties properties) {
+
+	public Wand(Properties properties) {
 		super(properties);
 		// TODO 自動生成されたコンストラクター・スタブ
 	}
-	
-	
+
+
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
 		if(!worldIn.isRemote) {
 			MinecraftServer minecraftserver=worldIn.getServer();
 			if(minecraftserver!=null&&minecraftserver.isAnvilFileSet()) {
 				try {
-			CommandSource commandsource=playerIn.getCommandSource();
-			String command="fill ~-15 ~ ~-15 ~15 ~30 ~15 air";
-			String command2="fill ~-15 ~-1 ~-15 ~15 ~-30 ~15 stone";
-			minecraftserver.getCommandManager().handleCommand(commandsource, command);
-			minecraftserver.getCommandManager().handleCommand(commandsource, command2);
+					CommandSource commandsource=playerIn.getCommandSource();
+					String command="fill ~-15 ~ ~-15 ~15 ~30 ~15 air";
+					String command2="fill ~-15 ~-1 ~-15 ~15 ~-30 ~15 stone";
+					minecraftserver.getCommandManager().handleCommand(commandsource, command);
+					minecraftserver.getCommandManager().handleCommand(commandsource, command2);
 				}catch(Throwable throwable){
-	                  CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Executing test item");
-	                  CrashReportCategory crashreportcategory = crashreport.makeCategory("Command to be executed");
-	                     
+					CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Executing test item");
+					CrashReportCategory crashreportcategory = crashreport.makeCategory("Command to be executed");
+
 				}
 			}
 		}
@@ -64,10 +55,10 @@ public class Itemtest extends Item implements ICommandSource{
 	public boolean onBlockDestroyed(ItemStack stack, World worldIn, IBlockState state, BlockPos pos,
 			EntityLivingBase entityLiving) {
 		// TODO 自動生成されたメソッド・スタブ
-		
+
 		return super.onBlockDestroyed(stack, worldIn, state, pos, entityLiving);
-		
-		
+
+
 
 	}
 
@@ -75,7 +66,7 @@ public class Itemtest extends Item implements ICommandSource{
 	@Override
 	public void sendMessage(ITextComponent component) {
 		// TODO 自動生成されたメソッド・スタブ
-		
+
 	}
 
 
@@ -99,4 +90,3 @@ public class Itemtest extends Item implements ICommandSource{
 		return false;
 	}
 }
-
