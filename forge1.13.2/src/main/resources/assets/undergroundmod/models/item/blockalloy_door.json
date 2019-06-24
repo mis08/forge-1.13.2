@@ -1,3 +1,6 @@
 {
-    "parent":"undergroundmod:block/blockalloy_door"
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "undergroundmod:items/blockalloy_door"
+    }
 }

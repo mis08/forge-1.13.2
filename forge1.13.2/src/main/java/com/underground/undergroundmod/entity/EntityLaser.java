@@ -4,6 +4,7 @@ import javax.annotation.Nullable;
 
 import com.underground.undergroundmod.UnderGroundMod;
 import com.underground.undergroundmod.block.BlockAlloy;
+import com.underground.undergroundmod.block.BlockAlloy_Door;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
@@ -64,7 +65,7 @@ public class EntityLaser extends EntityArrow{
 	//破壊の種類
 	private Block[] onceDestroy={UnderGroundMod.BlockAlloy};
 	private Block[] cantDestroy= {Blocks.BEDROCK};
-	private Block[] needException= {Blocks.TNT};
+	private Block[] needException= {Blocks.TNT,UnderGroundMod.BlockAlloy_Door};
 	
 	private int knockbackStrength;
 
@@ -148,8 +149,9 @@ public class EntityLaser extends EntityArrow{
 			IBlockState iblockstate = this.world.getBlockState(blockpos);
 
 			//ブロック破壊処理
-			this.DestroyBlock(iblockstate, blockpos);
-
+			if(!this.world.isRemote) {
+				this.DestroyBlock(iblockstate, blockpos);
+			}
 			this.inBlockState = iblockstate;
 
 			if (!iblockstate.isAir(world, blockpos)) {
@@ -248,7 +250,7 @@ public class EntityLaser extends EntityArrow{
 		for(Block b:onceDestroy) {
 			if(block == b) {
 				iblockstate.dropBlockAsItem(worldIn, blockpos, 0);
-				iblockstate.removedByPlayer(getEntityWorld(),blockpos, null,true,iblockstate.getFluidState() );
+				iblockstate.removedByPlayer(getEntityWorld(),blockpos,(EntityPlayer)player,true,iblockstate.getFluidState() );
 				Flag=true;
 				this.remove();
 			}
@@ -261,13 +263,19 @@ public class EntityLaser extends EntityArrow{
 					tnt.explode(world, blockpos);
 					world.removeBlock(blockpos);
 				}
+				
+				if(block==UnderGroundMod.BlockAlloy_Door) {
+					BlockAlloy_Door alloydoor=(BlockAlloy_Door)block;
+					alloydoor.onBlockHarvested(world, blockpos, iblockstate, (EntityPlayer)player);
+					this.remove();
+				}
 				Flag=true;
 			}
 		}
 
 		if(!Flag) {
 			iblockstate.dropBlockAsItem(worldIn, blockpos, 0);
-			iblockstate.removedByPlayer(getEntityWorld(),blockpos, null,true,iblockstate.getFluidState() );
+			iblockstate.removedByPlayer(getEntityWorld(),blockpos,(EntityPlayer)player,true,iblockstate.getFluidState() );
 		}
 
 	}
