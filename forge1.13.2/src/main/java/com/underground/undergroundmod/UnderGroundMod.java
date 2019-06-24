@@ -117,7 +117,8 @@ public class UnderGroundMod
     //Block作成 ItemRegisterにも登録のこと
     public static Block testBlock = new testblock(Block.Properties.create(Material.ROCK).hardnessAndResistance(2.5f,2.5f).sound(SoundType.STONE)).setRegistryName(MODID,"testblock");
     public static Block BlockAlloy =new BlockAlloy(Block.Properties.create(Material.ROCK).hardnessAndResistance(50.0F,1200.0F).sound(SoundType.STONE)).setRegistryName(MODID,"blockalloy");
-    public static Block BlockAlloy_Door =new BlockAlloy_Door(Block.Properties.create(Material.IRON).hardnessAndResistance(50.0F,1200).sound(SoundType.STONE)).setRegistryName(MODID,"blockalloy_door");
+    public static Block BlockAlloy_Door =new BlockAlloy_Door(Block.Properties.create(Material.IRON).hardnessAndResistance(50.0F,1200.0F).sound(SoundType.STONE)).setRegistryName(MODID,"blockalloy_door");
+    public static Block BlockTempered_Glass=new BlockTemperedGlass(Block.Properties.create(Material.GLASS).hardnessAndResistance(50.0F,1200.0F).sound(SoundType.GLASS)).setRegistryName(MODID,"blocktempered_glass");
     		
     //Entityドロップ変更
 	public static final ResourceLocation ENTITIES_SKYROAMER = LootTableList.register(new ResourceLocation(ModIdHolder.MODID,"inject/skyroamer"));
@@ -189,7 +190,8 @@ public class UnderGroundMod
         	blockRegister.getRegistry().registerAll(
 //        			testBlock,
         			BlockAlloy,
-        			BlockAlloy_Door
+        			BlockAlloy_Door,
+        			BlockTempered_Glass
         			);
         	
             LOGGER.info("HELLO from Register Block");
@@ -211,6 +213,7 @@ public class UnderGroundMod
 //        			Block2Item.set(testBlock),
         			Block2Item.set(BlockAlloy),
         			Block2Item.set(BlockAlloy_Door),
+        			Block2Item.set(BlockTempered_Glass),
         			Wrench,
         			LaserGun,
         			PowerCell,

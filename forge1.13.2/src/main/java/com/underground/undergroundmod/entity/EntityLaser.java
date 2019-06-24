@@ -5,6 +5,7 @@ import javax.annotation.Nullable;
 import com.underground.undergroundmod.UnderGroundMod;
 import com.underground.undergroundmod.block.BlockAlloy;
 import com.underground.undergroundmod.block.BlockAlloy_Door;
+import com.underground.undergroundmod.block.BlockTemperedGlass;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
@@ -12,6 +13,7 @@ import net.minecraft.block.BlockStairs;
 import net.minecraft.block.BlockTNT;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.ICommandSource;
 import net.minecraft.crash.CrashReport;
@@ -35,6 +37,7 @@ import net.minecraft.network.datasync.DataSerializer;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.network.play.server.SPacketChangeGameState;
+import net.minecraft.particles.IParticleData;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.datafix.fixes.WolfCollarColor;
@@ -63,7 +66,7 @@ public class EntityLaser extends EntityArrow{
 	private EntityLivingBase player;
 	
 	//破壊の種類
-	private Block[] onceDestroy={UnderGroundMod.BlockAlloy};
+	private Block[] onceDestroy={UnderGroundMod.BlockAlloy,UnderGroundMod.BlockTempered_Glass};
 	private Block[] cantDestroy= {Blocks.BEDROCK};
 	private Block[] needException= {Blocks.TNT,UnderGroundMod.BlockAlloy_Door};
 	
@@ -269,6 +272,7 @@ public class EntityLaser extends EntityArrow{
 					alloydoor.onBlockHarvested(world, blockpos, iblockstate, (EntityPlayer)player);
 					this.remove();
 				}
+				
 				Flag=true;
 			}
 		}

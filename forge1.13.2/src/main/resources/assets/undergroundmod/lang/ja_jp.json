@@ -16,5 +16,6 @@
   "entity.minecraft.skyroamer":"SkyRoamer",
   "entity.undergroundmod.entitysuprob":"SupRob",
   "block.undergroundmod.blockalloy":"合金ブロック",
-  "block.undergroundmod.blockalloy_door":"合金ドア"
+  "block.undergroundmod.blockalloy_door":"合金ドア",
+  "block.undergroundmod.blocktempered_glass":"強化ガラス"
 }
