@@ -11,8 +11,10 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.block.BlockStairs;
 import net.minecraft.block.BlockTNT;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.Sound;
 import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.ICommandSource;
@@ -40,6 +42,8 @@ import net.minecraft.network.play.server.SPacketChangeGameState;
 import net.minecraft.particles.IParticleData;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.datafix.fixes.WolfCollarColor;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -66,9 +70,9 @@ public class EntityLaser extends EntityArrow{
 	private EntityLivingBase player;
 	
 	//破壊の種類
-	private Block[] onceDestroy={UnderGroundMod.BlockAlloy,UnderGroundMod.BlockTempered_Glass};
+	private Block[] onceDestroy={UnderGroundMod.BlockAlloy};
 	private Block[] cantDestroy= {Blocks.BEDROCK};
-	private Block[] needException= {Blocks.TNT,UnderGroundMod.BlockAlloy_Door};
+	private Block[] needException= {Blocks.TNT,UnderGroundMod.BlockAlloy_Door,UnderGroundMod.BlockTempered_Glass};
 	
 	private int knockbackStrength;
 
@@ -270,6 +274,12 @@ public class EntityLaser extends EntityArrow{
 				if(block==UnderGroundMod.BlockAlloy_Door) {
 					BlockAlloy_Door alloydoor=(BlockAlloy_Door)block;
 					alloydoor.onBlockHarvested(world, blockpos, iblockstate, (EntityPlayer)player);
+					this.remove();
+				}
+				
+				if(block==UnderGroundMod.BlockTempered_Glass) {
+					this.playSound(SoundEvents.BLOCK_FIRE_EXTINGUISH, 1.0F, 1.0F);
+					iblockstate.removedByPlayer(getEntityWorld(),blockpos,(EntityPlayer)player,true,iblockstate.getFluidState() );
 					this.remove();
 				}
 				
