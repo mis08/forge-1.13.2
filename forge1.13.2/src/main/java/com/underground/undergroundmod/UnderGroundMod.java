@@ -19,21 +19,31 @@ import com.underground.undergroundmod.render.AddRender;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.command.impl.DebugCommand;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemSpawnEgg;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.item.Item.Properties;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.storage.loot.LootTableList;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ExtensionPoint;
 import net.minecraftforge.fml.InterModComms;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -41,13 +51,19 @@ import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.network.NetworkRegistry;
+import net.minecraftforge.fml.network.FMLPlayMessages.OpenContainer;
 
 import com.underground.undergroundmod.render.*;
 import com.underground.undergroundmod.structures.AddBiomeFeature;
 import com.underground.undergroundmod.item.*;
 import com.underground.undergroundmod.monster.entity.*;
+import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 import com.underground.undergroundmod.block.*;
 import com.underground.undergroundmod.entity.*;
+import com.underground.undergroundmod.tileentity.*;
+import com.underground.undergroundmod.tileentity.gui.GuiDecompMachine;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -62,6 +78,7 @@ public class UnderGroundMod
     // Directly reference a log4j logger.
     private static final Logger LOGGER = LogManager.getLogger();
     public static final Logger Debag= LogManager.getLogger();
+    
 
     public UnderGroundMod() {
         // Register the setup method for modloading
@@ -76,6 +93,22 @@ public class UnderGroundMod
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
         
+        
+        //GUI登録処理
+        ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.GUIFACTORY	, () -> {
+        	return (OpenContainer) -> {
+        		ResourceLocation location = OpenContainer.getId();
+        		if(location.toString().equals(ModIdHolder.MODID + ":decompgui")) {
+        			EntityPlayerSP player = Minecraft.getInstance().player;
+        			BlockPos pos = OpenContainer.getAdditionalData().readBlockPos();
+        			TileEntity tile = player.world.getTileEntity(pos);
+        			if(tile instanceof TileEntityDecompMachine) {
+        				return new GuiDecompMachine(player.inventory, (TileEntityDecompMachine) tile);
+        			}
+        		}
+        		return null;
+        	};
+        });        
         
         
     }
@@ -97,6 +130,10 @@ public class UnderGroundMod
 	public static EntityType<?> EntityLaser = EntityType.Builder.create(EntityLaser.class, EntityLaser::new).tracker(15, 5, true).build(MODID+":entitylaser").setRegistryName(new ResourceLocation(MODID,"entitylaser"));	
 	//スポーンエッグ用EntityType登録処理
 	public static EntityType<EntitySupRob> SUPROB = EntityType.register("suprob",EntityType.Builder.create(EntitySupRob.class, EntitySupRob::new));
+	
+	//TileEntity作成
+	public static TileEntityType<?> TileEntityDecompMachine = TileEntityType.Builder.create(TileEntityDecompMachine::new).build(null).setRegistryName(MODID,"decompmachine");
+	
     
     //Itemプロパティ作成
     public static Item test = new Itemtest(new Item.Properties().group(tabUnder).maxStackSize(64)).setRegistryName(new ResourceLocation(MODID, "itemtest"));
@@ -119,6 +156,7 @@ public class UnderGroundMod
     public static Block BlockAlloy =new BlockAlloy(Block.Properties.create(Material.ROCK).hardnessAndResistance(50.0F,1200.0F).sound(SoundType.STONE)).setRegistryName(MODID,"blockalloy");
     public static Block BlockAlloy_Door =new BlockAlloy_Door(Block.Properties.create(Material.IRON).hardnessAndResistance(50.0F,1200.0F).sound(SoundType.STONE)).setRegistryName(MODID,"blockalloy_door");
     public static Block BlockTempered_Glass=new BlockTemperedGlass(Block.Properties.create(Material.GLASS).hardnessAndResistance(50.0F,1200.0F).sound(SoundType.GLASS)).setRegistryName(MODID,"blocktempered_glass");
+    public static Block BlockDecompMachine=new BlockDecompMachine(Block.Properties.create(Material.ROCK).hardnessAndResistance(50.0F,1200.0F).sound(SoundType.STONE)).setRegistryName(MODID,"blockdecomp_machine");
     		
     //Entityドロップ変更
 	public static final ResourceLocation ENTITIES_SKYROAMER = LootTableList.register(new ResourceLocation(ModIdHolder.MODID,"inject/skyroamer"));
@@ -130,6 +168,7 @@ public class UnderGroundMod
 	public static final SoundEvent R2D2Scream = new SoundEvent(new ResourceLocation(MODID,"r2d2_scream")).setRegistryName(new ResourceLocation(MODID,"r2d2_scream"));
 	public static final SoundEvent R2D2Beap = new SoundEvent(new ResourceLocation(MODID,"r2d2_beap")).setRegistryName(new ResourceLocation(MODID,"r2d2_beap"));
 	public static final SoundEvent LaserGunSound = new SoundEvent(new ResourceLocation(MODID,"lasergunsound")).setRegistryName(new ResourceLocation(MODID,"lasergunsound"));
+	
     
     private void setup(final FMLCommonSetupEvent event)
     {
@@ -143,6 +182,8 @@ public class UnderGroundMod
         
         //Biome追加
         AddBiomeFeature.add();
+        
+        
         
         
         
@@ -191,7 +232,8 @@ public class UnderGroundMod
 //        			testBlock,
         			BlockAlloy,
         			BlockAlloy_Door,
-        			BlockTempered_Glass
+        			BlockTempered_Glass,
+        			BlockDecompMachine
         			);
         	
             LOGGER.info("HELLO from Register Block");
@@ -214,6 +256,7 @@ public class UnderGroundMod
         			Block2Item.set(BlockAlloy),
         			Block2Item.set(BlockAlloy_Door),
         			Block2Item.set(BlockTempered_Glass),
+        			Block2Item.set(BlockDecompMachine),
         			Wrench,
         			LaserGun,
         			PowerCell,
@@ -246,6 +289,13 @@ public class UnderGroundMod
         			R2D2Scream,
         			R2D2Beap,
         			LaserGunSound
+        			);
+        }
+        
+        @SubscribeEvent
+        public static void onTileEntityRegistry(final RegistryEvent.Register<TileEntityType<?>> evt) {
+        	evt.getRegistry().registerAll(
+        			TileEntityDecompMachine
         			);
         }
    

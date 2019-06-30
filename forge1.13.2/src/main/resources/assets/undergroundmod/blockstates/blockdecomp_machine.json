@@ -1,0 +1,19 @@
+{
+    "variants":{
+        "facing=north":{
+            "model":"undergroundmod:block/blockdecomp_machine"
+        },
+        "facing=south":{
+            "model":"undergroundmod:block/blockdecomp_machine",
+            "y":180
+        },
+        "facing=west":{
+            "model":"undergroundmod:block/blockdecomp_machine",
+            "y":270
+        },
+        "facing=east":{
+            "model":"undergroundmod:block/blockdecomp_machine",
+            "y":90
+        }
+    }
+}
