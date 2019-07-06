@@ -1,5 +1,6 @@
 package com.underground.undergroundmod.block;
 
+import com.underground.undergroundmod.UnderGroundMod;
 import com.underground.undergroundmod.tileentity.TileEntityDecompMachine;
 import com.underground.undergroundmod.tileentity.gui.GuiDecompMachine;
 import com.underground.undergroundmod.tileentity.interactionobject.InteractionObjectDecompMachine;
@@ -7,6 +8,8 @@ import com.underground.undergroundmod.tileentity.interactionobject.InteractionOb
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.BlockHorizontal;
+import net.minecraft.block.BlockRedstone;
+import net.minecraft.block.BlockRedstoneTorch;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -14,6 +17,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer.Builder;
 import net.minecraft.stats.StatList;
@@ -35,6 +39,7 @@ public class BlockDecompMachine extends BlockContainer{
 	
 	//ブロックの向き
 	public static DirectionProperty FACING=BlockHorizontal.HORIZONTAL_FACING;
+	public static final BooleanProperty DECOMP = BlockRedstoneTorch.LIT;
 
 	public BlockDecompMachine(Properties builder) {
 		super(builder);
@@ -48,9 +53,13 @@ public class BlockDecompMachine extends BlockContainer{
 			float hitX, float hitY, float hitZ) {
 		// TODO 自動生成されたメソッド・スタブ
 		if(!worldIn.isRemote) {
-			TileEntityDecompMachine tiledm=(TileEntityDecompMachine)worldIn.getTileEntity(pos);
-			NetworkHooks.openGui((EntityPlayerMP)player,new InteractionObjectDecompMachine(tiledm),pos);
-//			player.addStat(StatList.INTERACT_WITH_FURNACE);
+			TileEntity tileentity = worldIn.getTileEntity(pos);
+			if(tileentity instanceof TileEntityDecompMachine) {
+				TileEntityDecompMachine tiledm=(TileEntityDecompMachine)tileentity;
+				NetworkHooks.openGui((EntityPlayerMP)player,new InteractionObjectDecompMachine(tiledm),pos);
+				player.addStat(StatList.INTERACT_WITH_FURNACE);
+			}
+
 		}
 		return true;
 	}

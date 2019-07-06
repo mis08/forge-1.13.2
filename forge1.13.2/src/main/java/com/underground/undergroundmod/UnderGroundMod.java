@@ -13,6 +13,7 @@ import com.underground.undergroundmod.entity.EntityBullet;
 import com.underground.undergroundmod.entity.EntityExpArrow;
 import com.underground.undergroundmod.entity.EntitySupRob;
 import com.underground.undergroundmod.entity.EntityTippedExpArrow;
+import com.underground.undergroundmod.irecipe.DecompMachineRecipe;
 import com.underground.undergroundmod.monster.entity.EntitySkyRoamer;
 import com.underground.undergroundmod.render.AddRender;
 
@@ -22,6 +23,8 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.recipebook.RecipeList;
+import net.minecraft.command.impl.DeOpCommand;
 import net.minecraft.command.impl.DebugCommand;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.EntityPlayer;
@@ -34,11 +37,17 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.item.Item.Properties;
+import net.minecraft.item.crafting.FurnaceRecipe;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.IRecipeSerializer;
+import net.minecraft.item.crafting.RecipeSerializers;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.storage.loot.LootTableList;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.crafting.RecipeType;
+import net.minecraftforge.common.extensions.IForgeRecipe;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ExtensionPoint;
@@ -169,6 +178,9 @@ public class UnderGroundMod
 	public static final SoundEvent R2D2Beap = new SoundEvent(new ResourceLocation(MODID,"r2d2_beap")).setRegistryName(new ResourceLocation(MODID,"r2d2_beap"));
 	public static final SoundEvent LaserGunSound = new SoundEvent(new ResourceLocation(MODID,"lasergunsound")).setRegistryName(new ResourceLocation(MODID,"lasergunsound"));
 	
+	//Recipe
+	public static final IRecipeSerializer<DecompMachineRecipe> DECOPM = RecipeSerializers.register(new DecompMachineRecipe.Serializer());
+    public static final RecipeType<DecompMachineRecipe> DECOMP = RecipeType.get(new ResourceLocation("decomp"), DecompMachineRecipe.class);
     
     private void setup(final FMLCommonSetupEvent event)
     {
@@ -298,6 +310,13 @@ public class UnderGroundMod
         			TileEntityDecompMachine
         			);
         }
+        
+//        @SubscribeEvent
+//        public static void onIrecipeRegistry(final RegistryEvent.Register<DecompMachineRecipe> evt) {
+//        	 public static Item test = new Itemtest(new Item.Properties().group(tabUnder).maxStackSize(64)).setRegistryName(new ResourceLocation(MODID, "itemtest"));
+//        	 public static DecompMachineRecipe DMR = new DecompMachineRecipe(new ResourceLocation(MODID,"recipes"), group, ing, itemstack, exp, time)
+//        	   
+//        }
    
     }
 }

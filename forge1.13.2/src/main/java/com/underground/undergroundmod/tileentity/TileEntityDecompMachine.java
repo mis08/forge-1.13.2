@@ -1,47 +1,70 @@
 package com.underground.undergroundmod.tileentity;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nullable;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.underground.undergroundmod.Debug;
 import com.underground.undergroundmod.ModIdHolder;
 import com.underground.undergroundmod.UnderGroundMod;
+import com.underground.undergroundmod.block.BlockDecompMachine;
+import com.underground.undergroundmod.irecipe.DecompMachineRecipe;
 import com.underground.undergroundmod.tileentity.container.ContainerDecompMachine;
 
-import net.minecraft.client.renderer.texture.ITickable;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ContainerFurnace;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.IRecipeHelperPopulator;
+import net.minecraft.inventory.IRecipeHolder;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.RecipeItemHelper;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tags.Tag;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IItemProvider;
+import net.minecraft.util.ITickable;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.IInteractionObject;
+import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.items.ItemStackHandler;
 
-public class TileEntityDecompMachine extends TileEntity implements ISidedInventory,ITickable{
+public class TileEntityDecompMachine extends TileEntity implements ISidedInventory,ITickable,IRecipeHelperPopulator,IRecipeHolder{
 
-	private NonNullList<ItemStack> decompItemStacks = NonNullList.withSize(3, ItemStack.EMPTY);
+	private NonNullList<ItemStack> decompItemStacks = NonNullList.withSize(9, ItemStack.EMPTY);
 	private ITextComponent decompCutomName;
 	private static final int[] SLOTS_TOP = new int[]{0};
 	private static final int[] SLOTS_BOTTOM = new int[]{2, 1};
 	private static final int[] SLOTS_SIDES = new int[]{1};
-	
-	private ItemStackHandler inventory = new ItemStackHandler(3);
+
+	private ItemStackHandler inventory = new ItemStackHandler(10);
+	private Map<ResourceLocation, Integer> recipeUseCounts = Maps.newHashMap();
+	private int DecompBurnTime;
+	private int currentItemBurnTime;
+	private int cookTime;
+	private int totalCookTime;
 
 	public TileEntityDecompMachine(TileEntityType<?> tileEntityTypeIn) {
 		super(tileEntityTypeIn);
@@ -60,7 +83,7 @@ public class TileEntityDecompMachine extends TileEntity implements ISidedInvento
 	public ItemStackHandler getInventory() {
 		return this.inventory;
 	}
-	
+
 	@Override
 	public NBTTagCompound write(NBTTagCompound compound) {
 		// TODO 自動生成されたメソッド・スタブ
@@ -68,7 +91,7 @@ public class TileEntityDecompMachine extends TileEntity implements ISidedInvento
 		ItemStackHelper.saveAllItems(compound, this.decompItemStacks);
 		return compound;
 	}
-	
+
 	@Override
 	public void read(NBTTagCompound compound) {
 		// TODO 自動生成されたメソッド・スタブ
@@ -82,6 +105,111 @@ public class TileEntityDecompMachine extends TileEntity implements ISidedInvento
 	public void tick() {
 		// TODO 自動生成されたメソッド・スタブ
 		
+		boolean flag= this.isDecomping();
+		boolean flag1 = false;
+		if(this.isDecomping()) {
+//			--this.DecompBurnTime;
+		}
+
+		if(!this.world.isRemote) {
+	
+			if(this.isDecomping() || !this.decompItemStacks.get(0).isEmpty()) {
+				IRecipe irecipe = this.world.getRecipeManager().getRecipe(this,this.world,UnderGroundMod.DECOMP);
+				if(!this.isDecomping() && this.canDecomp(irecipe)) {
+					this.currentItemBurnTime = this.DecompBurnTime;
+					if(this.isDecomping()) {
+						flag1 = true;
+					}
+				}
+				
+				
+				if(this.isDecomping() && this.canDecomp(irecipe)) {
+					UnderGroundMod.Debag.info("in!!");
+					++this.cookTime;
+					if(this.cookTime == this.totalCookTime) {
+						Debug.text("Finished cook");
+						this.cookTime = 0;
+						this.totalCookTime = this.getCookTime();
+						this.decompItItem(irecipe);
+						flag1 = true;
+					}
+				}else {
+					this.cookTime = 0;
+				}
+			}else if(!this.isDecomping() && this.cookTime > 0) {
+				this.cookTime = MathHelper.clamp(this.cookTime -2, 0, this.totalCookTime);
+			}
+			
+			if(flag != this.isDecomping()) {
+				flag1 = true;
+				this.world.setBlockState(this.pos, this.world.getBlockState(this.pos).with(BlockDecompMachine.DECOMP, Boolean.valueOf(this.isDecomping())),3);
+			}
+		}
+		
+		if(flag1) {
+			this.markDirty();
+		}
+	}
+
+	private void decompItItem(@Nullable IRecipe recipe) {
+		// TODO 自動生成されたメソッド・スタブ
+		if(recipe != null && this.canDecomp(recipe)) {
+			ItemStack itemstack = this.decompItemStacks.get(0);
+			ItemStack itemstack1 = recipe.getRecipeOutput();
+			ItemStack itemstack2  = this.decompItemStacks.get(1);
+			if(itemstack2.isEmpty()) {
+				this.decompItemStacks.set(1, itemstack1.copy());
+			}else if(itemstack2.getItem() == itemstack1.getItem()) {
+				itemstack2.grow(itemstack1.getCount());
+			}
+			
+			if(!this.world.isRemote) {
+				this.canuseRecipe(this.world, (EntityPlayerMP)null, recipe);
+			}
+			
+			itemstack.shrink(1);
+		}
+	}
+
+	private int getCookTime() {
+		// TODO 自動生成されたメソッド・スタブ
+		DecompMachineRecipe decomprecipe = this.world.getRecipeManager().getRecipe(this,this.world,UnderGroundMod.DECOMP);
+		return decomprecipe != null ? decomprecipe.getCookingTime() : 200;
+	}
+
+
+	private boolean canDecomp(@Nullable IRecipe recipe) {
+		// TODO 自動生成されたメソッド・スタブ
+		if(!this.decompItemStacks.get(0).isEmpty() && recipe != null) {
+			ItemStack itemstack = recipe.getRecipeOutput();
+			if(itemstack.isEmpty()) {
+				return false;
+			}else {
+				ItemStack itemstack1 = this.decompItemStacks.get(1);
+				if(itemstack1.isEmpty()) {
+					return true;
+				}else if(!itemstack.isItemEqual(itemstack)) {
+					return false;
+				}else if(itemstack1.getCount() + itemstack.getCount() <= this.getInventoryStackLimit() && itemstack1.getCount() < itemstack1.getMaxStackSize()) {
+					return true;
+				}else {
+					return itemstack1.getCount() + itemstack.getCount() <= itemstack.getMaxStackSize();
+				}
+			}
+		}else {
+			return false;
+		}
+	}
+
+	private boolean isDecomping() {
+		// TODO 自動生成されたメソッド・スタブ
+//		return this.DecompBurnTime >0;
+		return true;
+	}
+	
+	@OnlyIn(Dist.CLIENT)
+	private static boolean isDecomping(IInventory inventory) {
+		return inventory.getField(0)> 0;
 	}
 
 	@Override
@@ -128,12 +256,11 @@ public class TileEntityDecompMachine extends TileEntity implements ISidedInvento
 		if(stack.getCount()>this.getInventoryStackLimit()) {
 			stack.setCount(this.getInventoryStackLimit());
 		}
-		//		焼く処理？
-		//		if(index==0 && !flag) {
-		//	         this.totalCookTime = this.getCookTime();
-		//	         this.cookTime = 0;
-		//	         this.markDirty();
-		//		}
+		if(index==0 && !flag) {
+			this.totalCookTime = this.getCookTime();
+			this.cookTime = 0;
+			this.markDirty();
+		}
 
 	}
 
@@ -174,19 +301,43 @@ public class TileEntityDecompMachine extends TileEntity implements ISidedInvento
 	@Override
 	public int getField(int id) {
 		// TODO 自動生成されたメソッド・スタブ
-		return 0;
+		switch(id) {
+			case 0:
+				return this.DecompBurnTime;
+			case 1:
+				return this.currentItemBurnTime;
+			case 2:
+				return this.cookTime;
+			case 3:
+				return this.totalCookTime;
+			default:
+				return 0;
+		}
 	}
 
 	@Override
 	public void setField(int id, int value) {
 		// TODO 自動生成されたメソッド・スタブ
+		switch(id) {
+			case 0:
+				this.DecompBurnTime = value;
+				break;
+			case 1:
+				this.currentItemBurnTime = value;
+				break;
+			case 2:
+				this.cookTime = value;
+				break;
+			case 3:
+				this.totalCookTime = value;
+		}
 
 	}
 
 	@Override
 	public int getFieldCount() {
 		// TODO 自動生成されたメソッド・スタブ
-		return 0;
+		return 4;
 	}
 
 	@Override
@@ -247,6 +398,45 @@ public class TileEntityDecompMachine extends TileEntity implements ISidedInvento
 		return true;
 	}
 
+	public void setRecipeUsed(IRecipe recipe) {
+		if(this.recipeUseCounts.containsKey(recipe.getId())) {
+			this.recipeUseCounts.put(recipe.getId(), this.recipeUseCounts.get(recipe.getId()) + 1);
+		}else {
+			this.recipeUseCounts.put(recipe.getId(), 1);
+		}
+	}
+
+	@Nullable
+	public IRecipe getRecipeUsed() {
+		return null;
+	}
+
+	public boolean canuseRecipe(World worldIn, EntityPlayerMP player, @Nullable IRecipe recipe) {
+		if(recipe != null) {
+			this.setRecipeUsed(recipe);
+			return true;
+		}else {
+			return false;
+		}
+	}
+
+	public void onCrafting(EntityPlayer player) {
+		if(!this.world.getGameRules().getBoolean("doLimitedCrafting"));{
+			List<IRecipe> list = Lists.newArrayList();
+
+			for(ResourceLocation resoucelocation : this.recipeUseCounts.keySet()) {
+				IRecipe irecipe = player.world.getRecipeManager().getRecipe(resoucelocation);
+				if(irecipe != null) {
+					list.add(irecipe);
+				}
+			}
+
+			player.unlockRecipes(list);
+		}
+		this.recipeUseCounts.clear();
+	}
+
+
 	public String getGuiID() {
 		return ModIdHolder.MODID+":decompgui";
 	}
@@ -258,6 +448,19 @@ public class TileEntityDecompMachine extends TileEntity implements ISidedInvento
 	@OnlyIn(Dist.CLIENT)
 	public static boolean isBurning(IInventory inventory) {
 		return inventory.getField(0) > 0;
+	}
+
+	public Map<ResourceLocation,Integer> getRecipeUseCounts(){
+		return this.recipeUseCounts;
+	}
+
+	@Override
+	public void fillStackedContents(RecipeItemHelper helper) {
+		// TODO 自動生成されたメソッド・スタブ
+		for(ItemStack itemstack : this.decompItemStacks) {
+			helper.accountStack(itemstack);
+		}
+		
 	}
 
 }

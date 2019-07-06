@@ -1,5 +1,7 @@
 package com.underground.undergroundmod.tileentity.container;
 
+import com.underground.undergroundmod.slot.SlotDecompMachine;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -27,10 +29,17 @@ public class ContainerDecompMachine extends Container{
 	public ContainerDecompMachine(InventoryPlayer playerInventory,IInventory decompInventory) {
 		this.tileDecomp = decompInventory;
 		this.world = playerInventory.player.world;
-		this.addSlot(new Slot(decompInventory, 0, 56, 17));
-		this.addSlot(new SlotFurnaceFuel(decompInventory, 1, 56, 53));
-		this.addSlot(new SlotFurnaceOutput(playerInventory.player, decompInventory, 2, 116, 35));
+		
+		this.addSlot(new Slot(decompInventory, 0, 36, 33));
+		
+		for(int x=0; x<3; ++x) {
+			for(int y=0; y<3; ++y) {
+				this.addSlot(new SlotDecompMachine(playerInventory.player, decompInventory, 1+x+y, 106+x*18, 18+y*18));
+			}
+		}
 
+		
+		
 		for(int i=0; i<3; ++i) {
 			for(int j=0; j<9; ++j) {
 				this.addSlot(new Slot(playerInventory, j+i*9+9, 8+j*18, 84+i*18));
@@ -40,7 +49,9 @@ public class ContainerDecompMachine extends Container{
 		for(int k=0; k<9; ++k) {
 			this.addSlot(new Slot(playerInventory, k, 8+k*18, 142));
 		}
+		
 
+ 
 	}
 
 	@Override
@@ -55,7 +66,7 @@ public class ContainerDecompMachine extends Container{
 	}
 
 	public int getOutputSlot() {
-		return 2;
+		return 1;
 	}
 
 	public int getWidth() {
@@ -68,7 +79,7 @@ public class ContainerDecompMachine extends Container{
 
 	@OnlyIn(Dist.CLIENT)
 	public int getSize() {
-		return 3;
+		return 10;
 	}
 
 	public void detectAndSendChanges() {
@@ -110,8 +121,9 @@ public class ContainerDecompMachine extends Container{
 		if (slot != null && slot.getHasStack()) {
 			ItemStack itemstack1 = slot.getStack();
 			itemstack = itemstack1.copy();
-			if (index == 2) {
-				if (!this.mergeItemStack(itemstack1, 3, 39, true)) {
+				
+			if (isOutputSlot(index)) {
+				if (!this.mergeItemStack(itemstack1, 10, 39, true)) {
 					return ItemStack.EMPTY;
 				}
 
@@ -160,6 +172,20 @@ public class ContainerDecompMachine extends Container{
 		}
 
 		return false;
+	}
+	
+	public boolean isOutputSlot(int index) {
+		for(int i = 1; i<9; ++i) {
+			if(i == index) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	@OnlyIn(Dist.CLIENT)
+	public void updateProgressBar(int id, int data) {
+		this.tileDecomp.setField(id, data);
 	}
 
 }

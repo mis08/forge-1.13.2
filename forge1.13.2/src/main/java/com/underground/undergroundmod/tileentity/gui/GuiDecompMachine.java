@@ -1,9 +1,12 @@
 package com.underground.undergroundmod.tileentity.gui;
 
+import com.underground.undergroundmod.ModIdHolder;
 import com.underground.undergroundmod.tileentity.TileEntityDecompMachine;
 import com.underground.undergroundmod.tileentity.container.ContainerDecompMachine;
 
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.gui.recipebook.GuiRecipeBook;
+import net.minecraft.client.gui.recipebook.IRecipeShownListener;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ClickType;
@@ -15,9 +18,10 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class GuiDecompMachine extends GuiContainer{
+public class GuiDecompMachine extends GuiContainer implements IRecipeShownListener{
 
-	private static final ResourceLocation FURNACE_GUI_TEXTURES = new ResourceLocation("textures/gui/container/furnace.png");
+	private static final ResourceLocation FURNACE_GUI_TEXTURES = new ResourceLocation(ModIdHolder.MODID + ":textures/gui/decomp_gui.png");
+//	private static final ResourceLocation FURNACE_GUI_TEXTURES = new ResourceLocation("textures/gui/container/furnace.png");
 	/** The player inventory bound to this GUI. */
 	private final InventoryPlayer playerInventory;
 	private final IInventory tileDecomp;
@@ -83,7 +87,7 @@ public class GuiDecompMachine extends GuiContainer{
 		}
 
 		int l = this.getCookProgressScaled(24);
-		this.drawTexturedModalRect(i + 79, j + 34, 176, 14, l + 1, 16);
+		this.drawTexturedModalRect(i + 70, j + 35, 176, 14, l + 1, 16);
 	}
 
 
@@ -114,6 +118,18 @@ public class GuiDecompMachine extends GuiContainer{
 		}
 
 		return this.tileDecomp.getField(0) * pixels / i;
+	}
+
+	@Override
+	public void recipesUpdated() {
+		// TODO 自動生成されたメソッド・スタブ
+		
+	}
+
+	@Override
+	public GuiRecipeBook func_194310_f() {
+		// TODO 自動生成されたメソッド・スタブ
+		return null;
 	}
 
 }
