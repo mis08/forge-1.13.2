@@ -8,6 +8,6 @@ public class Debug {
     public static final Logger Debag= LogManager.getLogger();
     
     public static void text(String str) {
-    	Debag.info(str);
+    	Debag.info("UnderDeb:"+str);
     }
 }

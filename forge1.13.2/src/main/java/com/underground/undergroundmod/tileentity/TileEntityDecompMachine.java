@@ -7,11 +7,15 @@ import javax.annotation.Nullable;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.underground.undergroundmod.Debug;
 import com.underground.undergroundmod.ModIdHolder;
 import com.underground.undergroundmod.UnderGroundMod;
 import com.underground.undergroundmod.block.BlockDecompMachine;
 import com.underground.undergroundmod.irecipe.DecompMachineRecipe;
+import com.underground.undergroundmod.irecipe.MoreRecipeHolder;
 import com.underground.undergroundmod.tileentity.container.ContainerDecompMachine;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -28,7 +32,9 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemString;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.RecipeItemHelper;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tags.Tag;
@@ -37,9 +43,11 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.JsonUtils;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.registry.IRegistry;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.IInteractionObject;
@@ -49,11 +57,12 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.RegistryEvent.Register;
 import net.minecraftforge.items.ItemStackHandler;
 
 public class TileEntityDecompMachine extends TileEntity implements ISidedInventory,ITickable,IRecipeHelperPopulator,IRecipeHolder{
 
-	private NonNullList<ItemStack> decompItemStacks = NonNullList.withSize(9, ItemStack.EMPTY);
+	private NonNullList<ItemStack> decompItemStacks = NonNullList.withSize(10, ItemStack.EMPTY);
 	private ITextComponent decompCutomName;
 	private static final int[] SLOTS_TOP = new int[]{0};
 	private static final int[] SLOTS_BOTTOM = new int[]{2, 1};
@@ -104,15 +113,15 @@ public class TileEntityDecompMachine extends TileEntity implements ISidedInvento
 	@Override
 	public void tick() {
 		// TODO 自動生成されたメソッド・スタブ
-		
+
 		boolean flag= this.isDecomping();
 		boolean flag1 = false;
 		if(this.isDecomping()) {
-//			--this.DecompBurnTime;
+			//			--this.DecompBurnTime;
 		}
 
 		if(!this.world.isRemote) {
-	
+
 			if(this.isDecomping() || !this.decompItemStacks.get(0).isEmpty()) {
 				IRecipe irecipe = this.world.getRecipeManager().getRecipe(this,this.world,UnderGroundMod.DECOMP);
 				if(!this.isDecomping() && this.canDecomp(irecipe)) {
@@ -121,13 +130,11 @@ public class TileEntityDecompMachine extends TileEntity implements ISidedInvento
 						flag1 = true;
 					}
 				}
-				
-				
+
+
 				if(this.isDecomping() && this.canDecomp(irecipe)) {
-					UnderGroundMod.Debag.info("in!!");
 					++this.cookTime;
 					if(this.cookTime == this.totalCookTime) {
-						Debug.text("Finished cook");
 						this.cookTime = 0;
 						this.totalCookTime = this.getCookTime();
 						this.decompItItem(irecipe);
@@ -139,13 +146,13 @@ public class TileEntityDecompMachine extends TileEntity implements ISidedInvento
 			}else if(!this.isDecomping() && this.cookTime > 0) {
 				this.cookTime = MathHelper.clamp(this.cookTime -2, 0, this.totalCookTime);
 			}
-			
+
 			if(flag != this.isDecomping()) {
 				flag1 = true;
 				this.world.setBlockState(this.pos, this.world.getBlockState(this.pos).with(BlockDecompMachine.DECOMP, Boolean.valueOf(this.isDecomping())),3);
 			}
 		}
-		
+
 		if(flag1) {
 			this.markDirty();
 		}
@@ -154,22 +161,65 @@ public class TileEntityDecompMachine extends TileEntity implements ISidedInvento
 	private void decompItItem(@Nullable IRecipe recipe) {
 		// TODO 自動生成されたメソッド・スタブ
 		if(recipe != null && this.canDecomp(recipe)) {
+
 			ItemStack itemstack = this.decompItemStacks.get(0);
 			ItemStack itemstack1 = recipe.getRecipeOutput();
 			ItemStack itemstack2  = this.decompItemStacks.get(1);
+
 			if(itemstack2.isEmpty()) {
 				this.decompItemStacks.set(1, itemstack1.copy());
 			}else if(itemstack2.getItem() == itemstack1.getItem()) {
 				itemstack2.grow(itemstack1.getCount());
 			}
-			
+
+			NonNullList<ItemStack> stacks = getMoreResult(recipe);
+			for(int i = 0; i < stacks.size(); ++i) {
+				if(this.decompItemStacks.get(i + 2).isEmpty()) {
+					if(stacks.get(i) != null) {
+						this.decompItemStacks.set(i+2, stacks.get(i).copy());
+					}
+				}else if(this.decompItemStacks.get(i+2).getItem() == stacks.get(i).getItem()) {
+					this.decompItemStacks.get(i+2).grow(stacks.get(i).getCount());
+				}
+			}
+
 			if(!this.world.isRemote) {
 				this.canuseRecipe(this.world, (EntityPlayerMP)null, recipe);
 			}
-			
 			itemstack.shrink(1);
 		}
 	}
+
+
+	//MoreRecipeHolderに退避させた情報から追加のResultを取得する
+	public NonNullList<ItemStack> getMoreResult(IRecipe recipe) {
+		JsonObject json = MoreRecipeHolder.getJsonObject(recipe.getId());
+		NonNullList<ItemStack> Stacks = NonNullList.withSize(8, ItemStack.EMPTY);
+
+		if(JsonUtils.hasField(json, "moreresult")) {
+			if(JsonUtils.isJsonArray(json, "moreresult")) {
+				JsonArray jsonResults =JsonUtils.getJsonArray(json, "moreresult");
+				for(int i = 0; i<Stacks.size(); ++i) {
+					if(i < jsonResults.size()) {
+						JsonElement je = jsonResults.get(i);
+						String s3 = je.getAsString();
+						Item item2 =IRegistry.field_212630_s.func_212608_b(new ResourceLocation(s3));
+						ItemStack is = new ItemStack(item2);
+						if(is != null ) {
+							Stacks.set(i, is);
+
+						}
+					}
+
+				}
+			}else {
+				ItemStack is =new ItemStack(IRegistry.field_212630_s.func_212608_b(new ResourceLocation(JsonUtils.getString(json, "moreresult"))));
+				Stacks.set(0, is);
+			}
+		}
+		return Stacks;
+	}
+
 
 	private int getCookTime() {
 		// TODO 自動生成されたメソッド・スタブ
@@ -203,10 +253,10 @@ public class TileEntityDecompMachine extends TileEntity implements ISidedInvento
 
 	private boolean isDecomping() {
 		// TODO 自動生成されたメソッド・スタブ
-//		return this.DecompBurnTime >0;
+		//		return this.DecompBurnTime >0;
 		return true;
 	}
-	
+
 	@OnlyIn(Dist.CLIENT)
 	private static boolean isDecomping(IInventory inventory) {
 		return inventory.getField(0)> 0;
@@ -349,7 +399,7 @@ public class TileEntityDecompMachine extends TileEntity implements ISidedInvento
 	@Override
 	public ITextComponent getName() {
 		// TODO 自動生成されたメソッド・スタブ
-		return (ITextComponent)(this.decompCutomName != null ? this.decompCutomName : new TextComponentTranslation("container.decomp"));
+		return (ITextComponent)(this.decompCutomName != null ? this.decompCutomName : new TextComponentTranslation("DECOMP MACHINE"));
 	}
 
 	@Override
@@ -460,7 +510,7 @@ public class TileEntityDecompMachine extends TileEntity implements ISidedInvento
 		for(ItemStack itemstack : this.decompItemStacks) {
 			helper.accountStack(itemstack);
 		}
-		
+
 	}
 
 }

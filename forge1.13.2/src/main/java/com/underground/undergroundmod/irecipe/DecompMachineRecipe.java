@@ -1,9 +1,13 @@
 package com.underground.undergroundmod.irecipe;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.underground.undergroundmod.Debug;
 import com.underground.undergroundmod.ModIdHolder;
 import com.underground.undergroundmod.UnderGroundMod;
 
+import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -28,6 +32,7 @@ public class DecompMachineRecipe extends ForgeRegistryEntry<DecompMachineRecipe>
 	private final ItemStack output;
 	private final float experience;
 	private final int cookingTime;
+	public ItemStack[] moreresult;
 
 	public DecompMachineRecipe(ResourceLocation rlocation,String group,Ingredient ing,ItemStack itemstack,float exp,int time) {
 		// TODO 自動生成されたコンストラクター・スタブ
@@ -38,6 +43,7 @@ public class DecompMachineRecipe extends ForgeRegistryEntry<DecompMachineRecipe>
 		this.experience = exp;
 		this.cookingTime = time;
 	}
+	
 
 	@Override
 	public boolean matches(IInventory inv, World worldIn) {
@@ -56,13 +62,13 @@ public class DecompMachineRecipe extends ForgeRegistryEntry<DecompMachineRecipe>
 		// TODO 自動生成されたメソッド・スタブ
 		return true;
 	}
-	
+
 	public NonNullList<Ingredient> getIngredients(){
 		NonNullList<Ingredient> nonnulllist = NonNullList.create();
 		nonnulllist.add(this.input);
 		return nonnulllist;
 	}
-	
+
 	public float getExperience() {
 		return this.experience;
 	}
@@ -72,12 +78,12 @@ public class DecompMachineRecipe extends ForgeRegistryEntry<DecompMachineRecipe>
 		// TODO 自動生成されたメソッド・スタブ
 		return this.output;
 	}
-	
+
 	//RecipeBook関連、おそらく不要
 	public String getGroup() {
 		return this.group;
 	}
-	
+
 	public int getCookingTime() {
 		return this.cookingTime;
 	}
@@ -87,7 +93,7 @@ public class DecompMachineRecipe extends ForgeRegistryEntry<DecompMachineRecipe>
 		// TODO 自動生成されたメソッド・スタブ
 		return this.id;
 	}
-	
+
 	public RecipeType<DecompMachineRecipe> getType(){
 		return UnderGroundMod.DECOMP;
 	}
@@ -98,8 +104,10 @@ public class DecompMachineRecipe extends ForgeRegistryEntry<DecompMachineRecipe>
 		return UnderGroundMod.DECOPM;
 	}
 	
+
 	public static class Serializer implements IRecipeSerializer<DecompMachineRecipe>{
 		private static ResourceLocation NAME = new ResourceLocation(ModIdHolder.MODID,"decomp");
+		@SuppressWarnings("deprecation")
 		public DecompMachineRecipe read(ResourceLocation recipeId,JsonObject json) {
 			String s = JsonUtils.getString(json, "group", "");
 			Ingredient ingredient;
@@ -108,14 +116,19 @@ public class DecompMachineRecipe extends ForgeRegistryEntry<DecompMachineRecipe>
 			}else {
 				ingredient = Ingredient.fromJson(JsonUtils.getJsonObject(json, "ingredient"));
 			}
-			
+
 			String s1 = JsonUtils.getString(json, "result");
+			
 			Item item = IRegistry.field_212630_s.func_212608_b(new ResourceLocation(s1));
+			
 			if(item != null) {
 				ItemStack itemstack = new ItemStack(item);
 				float Ivt_8_1_ = JsonUtils.getFloat(json, "experience",0.0F);
 				int Ivt_9_1_ = JsonUtils.getInt(json, "cookingtime", 200);
-				return new DecompMachineRecipe(recipeId, s, ingredient, itemstack, Ivt_8_1_, Ivt_9_1_);
+				DecompMachineRecipe dmr = new DecompMachineRecipe(recipeId, s, ingredient, itemstack, Ivt_8_1_, Ivt_9_1_);
+				sendJson(recipeId, json);
+//				dmr.moreresult=makeMoreResult(recipeId, json);
+				return dmr;
 			}else {
 				throw new IllegalStateException(s1 + "did not exist");
 			}
@@ -138,7 +151,7 @@ public class DecompMachineRecipe extends ForgeRegistryEntry<DecompMachineRecipe>
 			recipe.input.writeToBuffer(buffer);
 			buffer.writeItemStack(recipe.output);
 			buffer.writeVarInt(recipe.cookingTime);
-			
+
 		}
 		@Override
 		public ResourceLocation getName() {
@@ -146,8 +159,29 @@ public class DecompMachineRecipe extends ForgeRegistryEntry<DecompMachineRecipe>
 			return NAME;
 		}
 		
+		public void sendJson(ResourceLocation recipId, JsonObject json) {
+			MoreRecipeHolder.setMore(recipId, json);
+		}
+
+		public ItemStack[] makeMoreResult(ResourceLocation recipeId,JsonObject json) {
+			//jsonからarrayを受け取ってItemStack配列に変換する
+			ItemStack[] outPut = new ItemStack[9];
+			String[] results=new String[9];
+			JsonArray jsonResults =JsonUtils.getJsonArray(json, "moreresult");
+			for(JsonElement je : jsonResults) {
+				for(int i = 0; i<10; ++i) {
+					ItemStack is = new ItemStack(IRegistry.field_212630_s.func_212608_b(new ResourceLocation(je.toString())));
+					if(is != null) {
+						outPut[i] = is;
+					}
+				}
+			}
+			return outPut;
+		}
+		
 		
 	}
-
-
 }
+
+
+

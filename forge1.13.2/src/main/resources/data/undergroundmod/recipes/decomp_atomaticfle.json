@@ -1,0 +1,13 @@
+{
+  "type": "undergroundmod:decomp",
+  "ingredient": {
+    "item":"undergroundmod:automaticrifle"
+  },
+  "result":
+    "minecraft:oak_log",
+  "experience":0.7,
+  "cookingtime":150,
+  "moreresult":[
+  	"minecraft:iron_block"
+  ]
+}

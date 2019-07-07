@@ -86,6 +86,7 @@ public class GuiDecompMachine extends GuiContainer implements IRecipeShownListen
 			this.drawTexturedModalRect(i + 56, j + 36 + 12 - k, 176, 12 - k, 14, k + 1);
 		}
 
+		//CookBerの位置
 		int l = this.getCookProgressScaled(24);
 		this.drawTexturedModalRect(i + 70, j + 35, 176, 14, l + 1, 16);
 	}

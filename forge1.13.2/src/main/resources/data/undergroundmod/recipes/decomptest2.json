@@ -1,9 +1,13 @@
 {
   "type": "undergroundmod:decomp",
   "ingredient": {
-    "item": "minecraft:iron_ore"
+    "item": "minecraft:iron_ingot"
   },
-  "result": "minecraft:iron_ingot",
+  "result": "minecraft:apple",
   "experience": 0.7,
-  "cookingtime": 150
+  "cookingtime": 150,
+  "moreresult":[
+      "minecraft:beef",
+      "minecraft:sugar"
+  ]
 }

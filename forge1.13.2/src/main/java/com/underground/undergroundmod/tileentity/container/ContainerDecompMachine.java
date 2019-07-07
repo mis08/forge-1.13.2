@@ -1,5 +1,6 @@
 package com.underground.undergroundmod.tileentity.container;
 
+import com.underground.undergroundmod.Debug;
 import com.underground.undergroundmod.slot.SlotDecompMachine;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -32,9 +33,9 @@ public class ContainerDecompMachine extends Container{
 		
 		this.addSlot(new Slot(decompInventory, 0, 36, 33));
 		
-		for(int x=0; x<3; ++x) {
-			for(int y=0; y<3; ++y) {
-				this.addSlot(new SlotDecompMachine(playerInventory.player, decompInventory, 1+x+y, 106+x*18, 18+y*18));
+		for(int y=0; y<3; ++y) {
+			for(int x=0; x<3; ++x) {
+				this.addSlot(new SlotDecompMachine(playerInventory.player, decompInventory, 1+x+y*3, 106+x*18, 18+y*18));
 			}
 		}
 
@@ -126,7 +127,6 @@ public class ContainerDecompMachine extends Container{
 				if (!this.mergeItemStack(itemstack1, 10, 39, true)) {
 					return ItemStack.EMPTY;
 				}
-
 				slot.onSlotChange(itemstack1, itemstack);
 			} else if (index != 1 && index != 0) {
 				if (this.canSmelt(itemstack1)) {
@@ -175,7 +175,7 @@ public class ContainerDecompMachine extends Container{
 	}
 	
 	public boolean isOutputSlot(int index) {
-		for(int i = 1; i<9; ++i) {
+		for(int i = 1; i<10; ++i) {
 			if(i == index) {
 				return true;
 			}
