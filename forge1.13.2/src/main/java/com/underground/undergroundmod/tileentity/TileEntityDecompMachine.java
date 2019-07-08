@@ -2,6 +2,7 @@ package com.underground.undergroundmod.tileentity;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.UnaryOperator;
 
 import javax.annotation.Nullable;
 
@@ -37,6 +38,7 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.RecipeItemHelper;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.management.DemoPlayerInteractionManager;
 import net.minecraft.tags.Tag;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
@@ -133,12 +135,14 @@ public class TileEntityDecompMachine extends TileEntity implements ISidedInvento
 
 
 				if(this.isDecomping() && this.canDecomp(irecipe)) {
-					++this.cookTime;
-					if(this.cookTime == this.totalCookTime) {
-						this.cookTime = 0;
-						this.totalCookTime = this.getCookTime();
-						this.decompItItem(irecipe);
-						flag1 = true;
+					if(isOutPutSlotCanInsert(irecipe)) {
+						++this.cookTime;
+						if(this.cookTime == this.totalCookTime) {
+							this.cookTime = 0;
+							this.totalCookTime = this.getCookTime();
+							this.decompItItem(irecipe);
+							flag1 = true;
+						}
 					}
 				}else {
 					this.cookTime = 0;
@@ -156,6 +160,27 @@ public class TileEntityDecompMachine extends TileEntity implements ISidedInvento
 		if(flag1) {
 			this.markDirty();
 		}
+	}
+
+	public boolean isOutPutSlotCanInsert(IRecipe recipe) {
+		NonNullList<ItemStack> outPutItems = NonNullList.withSize(9, ItemStack.EMPTY);
+		NonNullList<ItemStack> holder = getMoreResult(recipe);
+		//holderの内容をoutPutItemsに上書きし、なおかつresultの最初のアイテムを加える
+		for(int a = 0; a<holder.size(); ++a) {
+			outPutItems.set(a+1, holder.get(a).copy());
+		}
+		outPutItems.set(0, recipe.getRecipeOutput());
+
+		for(int i = 0; i< outPutItems.size(); ++i) {
+			if(!outPutItems.get(i).isEmpty()) {
+				if(this.decompItemStacks.get(i + 1).getItem() != outPutItems.get(i).getItem()){
+					if(!this.decompItemStacks.get(i + 1).isEmpty()) {
+						return false;
+					}
+				}
+			}
+		}
+		return true;
 	}
 
 	private void decompItItem(@Nullable IRecipe recipe) {
@@ -202,9 +227,12 @@ public class TileEntityDecompMachine extends TileEntity implements ISidedInvento
 				for(int i = 0; i<Stacks.size(); ++i) {
 					if(i < jsonResults.size()) {
 						JsonElement je = jsonResults.get(i);
-						String s3 = je.getAsString();
-						Item item2 =IRegistry.field_212630_s.func_212608_b(new ResourceLocation(s3));
-						ItemStack is = new ItemStack(item2);
+
+						//						String s3 = je.getAsString();
+						//						Item item2 =IRegistry.field_212630_s.func_212608_b(new ResourceLocation(s3));
+						//						ItemStack is = new ItemStack(item2);
+
+						ItemStack is = DecompMachineRecipe.Serializer.deserializeItem(je.getAsJsonObject());
 						if(is != null ) {
 							Stacks.set(i, is);
 

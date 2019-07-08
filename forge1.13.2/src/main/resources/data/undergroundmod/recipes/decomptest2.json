@@ -3,11 +3,13 @@
   "ingredient": {
     "item": "minecraft:iron_ingot"
   },
-  "result": "minecraft:apple",
+  "result": {
+      "item":"minecraft:apple"
+  },
   "experience": 0.7,
   "cookingtime": 150,
   "moreresult":[
-      "minecraft:beef",
-      "minecraft:sugar"
+      {"item":"minecraft:beef"},
+      {"item":"minecraft:sugar"}
   ]
 }

@@ -3,6 +3,8 @@ package com.underground.undergroundmod.irecipe;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonSyntaxException;
 import com.underground.undergroundmod.Debug;
 import com.underground.undergroundmod.ModIdHolder;
 import com.underground.undergroundmod.UnderGroundMod;
@@ -14,6 +16,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.item.crafting.ShapedRecipe;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.NonNullList;
@@ -43,7 +46,7 @@ public class DecompMachineRecipe extends ForgeRegistryEntry<DecompMachineRecipe>
 		this.experience = exp;
 		this.cookingTime = time;
 	}
-	
+
 
 	@Override
 	public boolean matches(IInventory inv, World worldIn) {
@@ -103,7 +106,7 @@ public class DecompMachineRecipe extends ForgeRegistryEntry<DecompMachineRecipe>
 		// TODO 自動生成されたメソッド・スタブ
 		return UnderGroundMod.DECOPM;
 	}
-	
+
 
 	public static class Serializer implements IRecipeSerializer<DecompMachineRecipe>{
 		private static ResourceLocation NAME = new ResourceLocation(ModIdHolder.MODID,"decomp");
@@ -117,17 +120,21 @@ public class DecompMachineRecipe extends ForgeRegistryEntry<DecompMachineRecipe>
 				ingredient = Ingredient.fromJson(JsonUtils.getJsonObject(json, "ingredient"));
 			}
 
-			String s1 = JsonUtils.getString(json, "result");
-			
-			Item item = IRegistry.field_212630_s.func_212608_b(new ResourceLocation(s1));
-			
-			if(item != null) {
-				ItemStack itemstack = new ItemStack(item);
+			String s1 = "non";
+//			String s1 = JsonUtils.getString(json, "result");
+//			Item item = IRegistry.field_212630_s.func_212608_b(new ResourceLocation(s1));
+			ItemStack itemstack=null;
+			if(JsonUtils.isJsonArray(json, "result")) {
+			   Debug.text("is array");
+			}else {
+				itemstack = deserializeItem(JsonUtils.getJsonObject(json, "result"));
+				Debug.text("is object");
+			}
+			if(true) {
 				float Ivt_8_1_ = JsonUtils.getFloat(json, "experience",0.0F);
 				int Ivt_9_1_ = JsonUtils.getInt(json, "cookingtime", 200);
 				DecompMachineRecipe dmr = new DecompMachineRecipe(recipeId, s, ingredient, itemstack, Ivt_8_1_, Ivt_9_1_);
 				sendJson(recipeId, json);
-//				dmr.moreresult=makeMoreResult(recipeId, json);
 				return dmr;
 			}else {
 				throw new IllegalStateException(s1 + "did not exist");
@@ -158,7 +165,7 @@ public class DecompMachineRecipe extends ForgeRegistryEntry<DecompMachineRecipe>
 			// TODO 自動生成されたメソッド・スタブ
 			return NAME;
 		}
-		
+
 		public void sendJson(ResourceLocation recipId, JsonObject json) {
 			MoreRecipeHolder.setMore(recipId, json);
 		}
@@ -178,8 +185,20 @@ public class DecompMachineRecipe extends ForgeRegistryEntry<DecompMachineRecipe>
 			}
 			return outPut;
 		}
-		
-		
+
+		public static ItemStack deserializeItem(JsonObject json) {
+			String s = JsonUtils.getString(json, "item");
+			Item item = IRegistry.field_212630_s.func_212608_b(new ResourceLocation(s));
+			if (item == null) {
+				throw new JsonSyntaxException("Unknown item '" + s + "'");
+			} else if (json.has("data")) {
+				throw new JsonParseException("Disallowed data tag found");
+			} else {
+				int i = JsonUtils.getInt(json, "count", 1);
+				return new ItemStack(item, i);
+			}
+		}
+
 	}
 }
 

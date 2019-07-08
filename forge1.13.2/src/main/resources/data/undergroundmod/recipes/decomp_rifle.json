@@ -3,11 +3,14 @@
   "ingredient": {
     "item":"undergroundmod:automaticrifle"
   },
-  "result":
-    "minecraft:oak_log",
+  "result": {
+    "item": "minecraft:oak_log",
+    "count":2
+  },
   "experience":0.7,
   "cookingtime":150,
   "moreresult":[
-  	"minecraft:iron_block"
+  	{"item":"minecraft:iron_block",
+  	 "count":3}
   ]
 }
