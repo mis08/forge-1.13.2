@@ -173,6 +173,7 @@ public class UnderGroundMod
     public static Block BlockGenerator = new BlockGenerator(Block.Properties.create(Material.ROCK).hardnessAndResistance(50.0F,1200.0F).sound(SoundType.STONE)).setRegistryName(MODID,"block_generator");
     public static Block BlockAlloy_Stairs = new BlockAlloy_stairs(block.getDefaultState(),Block.Properties.from(block)).setRegistryName(MODID,"blockalloy_stairs");
     public static Block BlockAlloy_Slab = new BlockAlloy_Slab(Block.Properties.from(block)).setRegistryName(MODID,"blockalloy_slab");
+    public static Block BlockTritium_Lamp = new BlockTritium_lamp(Block.Properties.from(block).lightValue(15)).setRegistryName(MODID,"blocktritium_lamp");
     
     //Entityドロップ変更
 	public static final ResourceLocation ENTITIES_SKYROAMER = LootTableList.register(new ResourceLocation(ModIdHolder.MODID,"inject/skyroamer"));
@@ -255,7 +256,8 @@ public class UnderGroundMod
         			BlockDecompMachine,
         			BlockGenerator,
         			BlockAlloy_Stairs,
-        			BlockAlloy_Slab
+        			BlockAlloy_Slab,
+        			BlockTritium_Lamp
         			);
         	
             LOGGER.info("HELLO from Register Block");
@@ -282,6 +284,7 @@ public class UnderGroundMod
         			Block2Item.set(BlockGenerator),
         			Block2Item.set(BlockAlloy_Stairs),
         			Block2Item.set(BlockAlloy_Slab),
+        			Block2Item.set(BlockTritium_Lamp),
         			Wrench,
         			LaserGun,
         			PowerCell,
