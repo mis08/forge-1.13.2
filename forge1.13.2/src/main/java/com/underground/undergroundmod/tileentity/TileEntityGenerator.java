@@ -4,22 +4,24 @@ import com.underground.undergroundmod.UnderGroundMod;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraftforge.items.ItemStackHandler;
 
 public class TileEntityGenerator extends TileEntity implements ISidedInventory{
-	
+
 	private NonNullList<ItemStack> generatorItemStacks = NonNullList.withSize(1, ItemStack.EMPTY);
 
 	public TileEntityGenerator(TileEntityType<?> tileEntityTypeIn) {
 		super(tileEntityTypeIn);
 		// TODO 自動生成されたコンストラクター・スタブ
 	}
-	
+
 	public TileEntityGenerator() {
 		super(UnderGroundMod.TileEntityGenerator);
 	}
@@ -33,32 +35,39 @@ public class TileEntityGenerator extends TileEntity implements ISidedInventory{
 	@Override
 	public boolean isEmpty() {
 		// TODO 自動生成されたメソッド・スタブ
-//		for(ItemStack itemStack : )
-		return false;
+		for(ItemStack itemStack : this.generatorItemStacks) {
+			if(!itemStack.isEmpty()) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	@Override
 	public ItemStack getStackInSlot(int index) {
 		// TODO 自動生成されたメソッド・スタブ
-		return null;
+		return this.generatorItemStacks.get(index);
 	}
 
 	@Override
 	public ItemStack decrStackSize(int index, int count) {
 		// TODO 自動生成されたメソッド・スタブ
-		return null;
+		return ItemStackHelper.getAndSplit(this.generatorItemStacks, index, count);
 	}
 
 	@Override
 	public ItemStack removeStackFromSlot(int index) {
 		// TODO 自動生成されたメソッド・スタブ
-		return null;
+		return ItemStackHelper.getAndRemove(this.generatorItemStacks, index);
 	}
 
 	@Override
 	public void setInventorySlotContents(int index, ItemStack stack) {
 		// TODO 自動生成されたメソッド・スタブ
-		
+		this.generatorItemStacks.set(index, stack);
+		if(stack.getCount()>this.getInventoryStackLimit()) {
+			stack.setCount(this.getInventoryStackLimit());
+		}
 	}
 
 	@Override
@@ -76,13 +85,13 @@ public class TileEntityGenerator extends TileEntity implements ISidedInventory{
 	@Override
 	public void openInventory(EntityPlayer player) {
 		// TODO 自動生成されたメソッド・スタブ
-		
+
 	}
 
 	@Override
 	public void closeInventory(EntityPlayer player) {
 		// TODO 自動生成されたメソッド・スタブ
-		
+
 	}
 
 	@Override
@@ -100,7 +109,7 @@ public class TileEntityGenerator extends TileEntity implements ISidedInventory{
 	@Override
 	public void setField(int id, int value) {
 		// TODO 自動生成されたメソッド・スタブ
-		
+
 	}
 
 	@Override
@@ -112,7 +121,7 @@ public class TileEntityGenerator extends TileEntity implements ISidedInventory{
 	@Override
 	public void clear() {
 		// TODO 自動生成されたメソッド・スタブ
-		
+
 	}
 
 	@Override
