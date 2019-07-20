@@ -1,0 +1,7 @@
+{
+    "variants": {
+        "type=bottom": { "model": "undergroundmod:block/blockalloy_slab" },
+        "type=top": { "model": "undergroundmod:block/blockalloy_slab" },
+        "type=double": { "model": "undergroundmod:block/blockalloy" }
+    }
+}
