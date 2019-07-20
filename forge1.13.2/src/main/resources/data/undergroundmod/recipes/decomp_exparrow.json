@@ -1,0 +1,15 @@
+{
+  "type": "undergroundmod:decomp",
+  "ingredient": {
+    "item":"undergroundmod:exparrow"
+  },
+  "result": {
+    "item": "minecraft:gunpowder",
+    "count":1
+  },
+  "cookingtime":50,
+  "moreresult":[
+  	{"item":"minecraft:flint",
+  	 "count":1}
+  ]
+}

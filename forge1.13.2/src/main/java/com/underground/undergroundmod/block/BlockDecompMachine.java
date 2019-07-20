@@ -19,6 +19,7 @@ import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.DirectionProperty;
+import net.minecraft.state.IntegerProperty;
 import net.minecraft.state.StateContainer.Builder;
 import net.minecraft.stats.StatList;
 import net.minecraft.tileentity.TileEntity;
@@ -38,12 +39,13 @@ import net.minecraftforge.fml.network.NetworkHooks;
 public class BlockDecompMachine extends BlockContainer{
 	
 	//ブロックの向き
-	public static DirectionProperty FACING=BlockHorizontal.HORIZONTAL_FACING;
-	public static final BooleanProperty DECOMP = BlockRedstoneTorch.LIT;
+	public static final DirectionProperty FACING=BlockHorizontal.HORIZONTAL_FACING;
+	public static final BooleanProperty POWER = BlockRedstoneTorch.LIT;
+	public static final IntegerProperty PROGRESS = IntegerProperty.create("progress",0,3);
 
 	public BlockDecompMachine(Properties builder) {
 		super(builder);
-		this.setDefaultState(this.stateContainer.getBaseState().with(FACING, EnumFacing.NORTH));
+		this.setDefaultState(this.stateContainer.getBaseState().with(FACING, EnumFacing.NORTH).with(POWER, Boolean.valueOf(false)).with(PROGRESS, 0));
 		// TODO 自動生成されたコンストラクター・スタブ
 	}
 	
@@ -89,7 +91,7 @@ public class BlockDecompMachine extends BlockContainer{
 	
 	@Override
 	protected void fillStateContainer(Builder<Block, IBlockState> builder) {
-		builder.add(FACING);
+		builder.add(FACING,POWER,PROGRESS);
 	}
 	
 	@Override

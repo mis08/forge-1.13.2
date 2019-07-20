@@ -1,0 +1,17 @@
+{
+    "type":"crafting_shaped",
+    "pattern":[
+        "XXX",
+        "YYY",
+        "XXX"
+    ],
+    "key":{
+        "X":{
+        "item": "undergroundmod:alloy_ingot"
+        },
+        "Y":{"item":"minecraft:redstone_block"}
+        },
+    "result":{
+        "item": "undergroundmod:laser_core"
+    }
+}

@@ -1,0 +1,15 @@
+{
+  "type": "undergroundmod:decomp",
+  "ingredient": {
+    "item":"undergroundmod:laser_core"
+  },
+  "result": {
+    "item": "undergroundmod:alloy_ingot",
+    "count":4
+  },
+  "cookingtime":200,
+  "moreresult":[
+  	{"item":"minecraft:redstone",
+  	 "count":5}
+  ]
+}

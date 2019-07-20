@@ -1,0 +1,16 @@
+{
+    "type":"crafting_shaped",
+    "pattern":[
+        "XY ",
+        "YZY",
+        "  Y"
+    ],
+    "key":{
+        "X":{"item":"minecraft:redstone_block"},
+        "Y":{"item":"undergroundmod:blockalloy"},
+        "Z":{"item":"undergroundmod:laser_core"}
+        },
+    "result":{
+        "item":"undergroundmod:lasergun"
+    }
+}

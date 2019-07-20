@@ -13,9 +13,12 @@
   "item.undergroundmod.wrench":"Wrench",
   "item.undergroundmod.lasergun":"LaserGun",
   "item.undergroundmod.powercell.powercell":"PowerCell",
+  "item.undergroundmod.alloy_ingot":"合金インゴット",
+  "item.undergroundmod.laser_core":"LaserCore",
   "entity.minecraft.skyroamer":"SkyRoamer",
   "entity.undergroundmod.entitysuprob":"SupRob",
   "block.undergroundmod.blockalloy":"合金ブロック",
   "block.undergroundmod.blockalloy_door":"合金ドア",
-  "block.undergroundmod.blocktempered_glass":"強化ガラス"
+  "block.undergroundmod.blocktempered_glass":"強化ガラス",
+  "block.undergroundmod.blockdecomp_machine":"DECOMP MACHINE"
 }

@@ -60,7 +60,6 @@ public class LaserGun extends AutomaticRifle{
 			EntityLaser laser =powerCell.createLaser(worldIn, playerIn);
 			laser.shoot(playerIn,playerIn.rotationPitch, playerIn.rotationYaw, 0.0F, 0.7F, 1.0F);
 			worldIn.spawnEntity(laser);
-			UnderGroundMod.Debag.info("spawnLaser");
 			worldIn.playSound((EntityPlayer)null, playerIn.posX, playerIn.posY, playerIn.posZ, UnderGroundMod.LaserGunSound, SoundCategory.RECORDS, 1.0F, 1.0F / (random.nextFloat() * 0.4F + 1.2F) + 3 * 0.5F);
 	}
 	

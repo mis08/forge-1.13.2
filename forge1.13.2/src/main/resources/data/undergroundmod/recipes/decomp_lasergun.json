@@ -1,0 +1,17 @@
+{
+  "type": "undergroundmod:decomp",
+  "ingredient": {
+    "item":"undergroundmod:lasergun"
+  },
+  "result": {
+    "item": "undergroundmod:blockalloy",
+    "count":2
+  },
+  "cookingtime":500,
+  "moreresult":[
+      {"item":"undergroundmod:alloy_ingot",
+      "count":6},
+      {"item":"minecraft:redstone",
+      "count":4}
+  ]
+}

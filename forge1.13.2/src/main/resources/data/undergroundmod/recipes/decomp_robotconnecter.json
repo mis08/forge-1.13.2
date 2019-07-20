@@ -1,0 +1,19 @@
+{
+  "type": "undergroundmod:decomp",
+  "ingredient": {
+    "item":"undergroundmod:robotconnecter"
+  },
+  "result": {
+    "item": "undergroundmod:circuit",
+    "count":1
+  },
+  "cookingtime":300,
+  "moreresult":[
+  	{"item":"minecraft:iron_ingot",
+  	 "count":3},
+  	 {"item":"minecraft:redstone",
+  	 "count":1},
+  	 {"item":"minecraft:gold_nugget",
+  	 "count":1}
+  ]
+}

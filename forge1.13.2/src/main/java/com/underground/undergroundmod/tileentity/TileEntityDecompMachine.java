@@ -1,11 +1,13 @@
 package com.underground.undergroundmod.tileentity;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.UnaryOperator;
 
 import javax.annotation.Nullable;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonArray;
@@ -19,6 +21,9 @@ import com.underground.undergroundmod.irecipe.DecompMachineRecipe;
 import com.underground.undergroundmod.irecipe.MoreRecipeHolder;
 import com.underground.undergroundmod.tileentity.container.ContainerDecompMachine;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -39,6 +44,7 @@ import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.RecipeItemHelper;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.management.DemoPlayerInteractionManager;
+import net.minecraft.state.IProperty;
 import net.minecraft.tags.Tag;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
@@ -48,6 +54,7 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.IRegistry;
 import net.minecraft.util.text.ITextComponent;
@@ -100,6 +107,9 @@ public class TileEntityDecompMachine extends TileEntity implements ISidedInvento
 		// TODO 自動生成されたメソッド・スタブ
 		super.write(compound);
 		ItemStackHelper.saveAllItems(compound, this.decompItemStacks);
+		compound.setInt("CookTime", this.cookTime);
+		compound.setInt("CookTimeTotal", this.totalCookTime);
+
 		return compound;
 	}
 
@@ -109,34 +119,33 @@ public class TileEntityDecompMachine extends TileEntity implements ISidedInvento
 		super.read(compound);
 		this.decompItemStacks = NonNullList.withSize(this.getSizeInventory(), ItemStack.EMPTY);
 		ItemStackHelper.loadAllItems(compound, this.decompItemStacks);
+		this.cookTime = compound.getInt("CookTime");
+		this.totalCookTime = compound.getInt("CookTimeTotal");
 	}
-
 
 	@Override
 	public void tick() {
 		// TODO 自動生成されたメソッド・スタブ
 
-		boolean flag= this.isDecomping();
 		boolean flag1 = false;
-		if(this.isDecomping()) {
-			//			--this.DecompBurnTime;
-		}
 
 		if(!this.world.isRemote) {
 
-			if(this.isDecomping() || !this.decompItemStacks.get(0).isEmpty()) {
+			if(this.isPowerIn() || !this.decompItemStacks.get(0).isEmpty()) {
 				IRecipe irecipe = this.world.getRecipeManager().getRecipe(this,this.world,UnderGroundMod.DECOMP);
-				if(!this.isDecomping() && this.canDecomp(irecipe)) {
+				if(!this.isPowerIn() && this.canDecomp(irecipe)) {
 					this.currentItemBurnTime = this.DecompBurnTime;
-					if(this.isDecomping()) {
+					if(this.isPowerIn()) {
 						flag1 = true;
 					}
 				}
 
 
-				if(this.isDecomping() && this.canDecomp(irecipe)) {
+				if(this.isPowerIn() && this.canDecomp(irecipe)) {
 					if(isOutPutSlotCanInsert(irecipe)) {
 						++this.cookTime;
+						this.world.setBlockState(this.pos, this.world.getBlockState(this.pos).with(BlockDecompMachine.PROGRESS, Integer.valueOf(getProgress())));
+						int test = getProgress();
 						if(this.cookTime == this.totalCookTime) {
 							this.cookTime = 0;
 							this.totalCookTime = this.getCookTime();
@@ -147,19 +156,66 @@ public class TileEntityDecompMachine extends TileEntity implements ISidedInvento
 				}else {
 					this.cookTime = 0;
 				}
-			}else if(!this.isDecomping() && this.cookTime > 0) {
+			}else if(!this.isPowerIn() && this.cookTime > 0) {
 				this.cookTime = MathHelper.clamp(this.cookTime -2, 0, this.totalCookTime);
 			}
 
-			if(flag != this.isDecomping()) {
-				flag1 = true;
-				this.world.setBlockState(this.pos, this.world.getBlockState(this.pos).with(BlockDecompMachine.DECOMP, Boolean.valueOf(this.isDecomping())),3);
-			}
 		}
 
+		if(isPowerIn()) {
+			this.world.setBlockState(this.pos, this.world.getBlockState(this.pos).with(BlockDecompMachine.POWER, Boolean.valueOf(true)),3);
+		}else {
+			this.world.setBlockState(this.pos, this.world.getBlockState(this.pos).with(BlockDecompMachine.POWER, Boolean.valueOf(false)),3);
+		}
+		
+		
+		
 		if(flag1) {
 			this.markDirty();
 		}
+	}
+	
+	public int getProgress() {
+		int split = this.totalCookTime/2;
+		if(this.cookTime > this.totalCookTime-this.totalCookTime/10) {
+			return 3;
+		}else if(this.cookTime > split) {
+			return 2;
+		}else if(this.cookTime > this.totalCookTime/10) {
+			return 1;
+		}
+		return 0;
+	}
+
+	public boolean isPowerIn() {
+		for(int i = 0; i<6; ++i) {
+			BlockPos nextpos =null;
+			switch(i) {
+				case 0:
+					nextpos = new BlockPos(this.pos.getX()+1, this.pos.getY(), this.pos.getZ());
+					break;
+				case 1:
+					nextpos = new BlockPos(this.pos.getX(), this.pos.getY()+1, this.pos.getZ());
+					break;
+				case 2:
+					nextpos = new BlockPos(this.pos.getX(), this.pos.getY(), this.pos.getZ()+1);
+					break;
+				case 3:
+					nextpos = new BlockPos(this.pos.getX()-1, this.pos.getY(), this.pos.getZ());
+					break;
+				case 4:
+					nextpos = new BlockPos(this.pos.getX(), this.pos.getY()-1, this.pos.getZ());
+					break;
+				case 5:
+					nextpos = new BlockPos(this.pos.getX(), this.pos.getY(), this.pos.getZ()-1);
+					break;
+			}
+			IBlockState bs = this.world.getBlockState(nextpos);
+			if(bs.getBlock() == UnderGroundMod.BlockGenerator) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public boolean isOutPutSlotCanInsert(IRecipe recipe) {
@@ -277,12 +333,6 @@ public class TileEntityDecompMachine extends TileEntity implements ISidedInvento
 		}else {
 			return false;
 		}
-	}
-
-	private boolean isDecomping() {
-		// TODO 自動生成されたメソッド・スタブ
-		//		return this.DecompBurnTime >0;
-		return true;
 	}
 
 	@OnlyIn(Dist.CLIENT)

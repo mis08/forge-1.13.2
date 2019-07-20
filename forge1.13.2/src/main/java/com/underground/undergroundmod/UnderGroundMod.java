@@ -142,6 +142,7 @@ public class UnderGroundMod
 	
 	//TileEntity作成
 	public static TileEntityType<?> TileEntityDecompMachine = TileEntityType.Builder.create(TileEntityDecompMachine::new).build(null).setRegistryName(MODID,"decompmachine");
+	public static TileEntityType<?> TileEntityGenerator =  TileEntityType.Builder.create(TileEntityGenerator::new).build(null).setRegistryName(MODID,"generator");
 	
     
     //Itemプロパティ作成
@@ -158,6 +159,8 @@ public class UnderGroundMod
     public static Item LaserGun = new LaserGun(new Item.Properties().group(tabUnder).defaultMaxDamage(384)).setRegistryName(new ResourceLocation(MODID,"lasergun"));
     public static Item PowerCell = new PowerCell(new Item.Properties().group(tabUnder).defaultMaxDamage(384)).setRegistryName(new ResourceLocation(MODID,"powercell/powercell"));
     public static Item Wand=new Wand(new Item.Properties().group(tabUnder).defaultMaxDamage(384)).setRegistryName(new ResourceLocation(MODID,"wand"));
+    public static Item AlloyIngot = new Alloy_ingot(new Item.Properties().group(tabUnder).maxStackSize(64)).setRegistryName(new ResourceLocation(MODID,"alloy_ingot"));
+    public static Item LaserCore = new Laser_core(new Item.Properties().group(tabUnder).maxStackSize(64)).setRegistryName(new ResourceLocation(MODID,"laser_core"));
 
     
     //Block作成 ItemRegisterにも登録のこと
@@ -166,7 +169,8 @@ public class UnderGroundMod
     public static Block BlockAlloy_Door =new BlockAlloy_Door(Block.Properties.create(Material.IRON).hardnessAndResistance(50.0F,1200.0F).sound(SoundType.STONE)).setRegistryName(MODID,"blockalloy_door");
     public static Block BlockTempered_Glass=new BlockTemperedGlass(Block.Properties.create(Material.GLASS).hardnessAndResistance(50.0F,1200.0F).sound(SoundType.GLASS)).setRegistryName(MODID,"blocktempered_glass");
     public static Block BlockDecompMachine=new BlockDecompMachine(Block.Properties.create(Material.ROCK).hardnessAndResistance(50.0F,1200.0F).sound(SoundType.STONE)).setRegistryName(MODID,"blockdecomp_machine");
-    		
+    public static Block BlockGenerator = new BlockGenerator(Block.Properties.create(Material.ROCK).hardnessAndResistance(50.0F,1200.0F).sound(SoundType.STONE)).setRegistryName(MODID,"block_generator");
+    
     //Entityドロップ変更
 	public static final ResourceLocation ENTITIES_SKYROAMER = LootTableList.register(new ResourceLocation(ModIdHolder.MODID,"inject/skyroamer"));
 
@@ -245,7 +249,8 @@ public class UnderGroundMod
         			BlockAlloy,
         			BlockAlloy_Door,
         			BlockTempered_Glass,
-        			BlockDecompMachine
+        			BlockDecompMachine,
+        			BlockGenerator
         			);
         	
             LOGGER.info("HELLO from Register Block");
@@ -269,10 +274,13 @@ public class UnderGroundMod
         			Block2Item.set(BlockAlloy_Door),
         			Block2Item.set(BlockTempered_Glass),
         			Block2Item.set(BlockDecompMachine),
+        			Block2Item.set(BlockGenerator),
         			Wrench,
         			LaserGun,
         			PowerCell,
-        			Wand
+        			Wand,
+        			AlloyIngot,
+        			LaserCore
         			);
         }
        

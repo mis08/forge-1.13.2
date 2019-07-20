@@ -1,18 +1,87 @@
 {
     "variants":{
-        "facing=north":{
-            "model":"undergroundmod:block/blockdecomp_machine"
+        "facing=north,lit=true,progress=0":{
+            "model":"undergroundmod:block/decompmachine/blockdecomp_machine"
         },
-        "facing=south":{
-            "model":"undergroundmod:block/blockdecomp_machine",
+        "facing=north,lit=true,progress=1":{
+            "model":"undergroundmod:block/decompmachine/blockdecomp_machine1"
+        },
+        "facing=north,lit=true,progress=2":{
+            "model":"undergroundmod:block/decompmachine/blockdecomp_machine2"
+        },
+        "facing=north,lit=true,progress=3":{
+            "model":"undergroundmod:block/decompmachine/blockdecomp_machine3"
+        },
+        
+        
+        "facing=south,lit=true,progress=0":{
+            "model":"undergroundmod:block/decompmachine/blockdecomp_machine",
             "y":180
         },
-        "facing=west":{
-            "model":"undergroundmod:block/blockdecomp_machine",
+        "facing=south,lit=true,progress=1":{
+            "model":"undergroundmod:block/decompmachine/blockdecomp_machine1",
+            "y":180
+        },
+        "facing=south,lit=true,progress=2":{
+            "model":"undergroundmod:block/decompmachine/blockdecomp_machine2",
+            "y":180
+        },
+        "facing=south,lit=true,progress=3":{
+            "model":"undergroundmod:block/decompmachine/blockdecomp_machine3",
+            "y":180
+        },
+        
+        
+        "facing=west,lit=true,progress=0":{
+            "model":"undergroundmod:block/decompmachine/blockdecomp_machine",
             "y":270
         },
-        "facing=east":{
-            "model":"undergroundmod:block/blockdecomp_machine",
+        "facing=west,lit=true,progress=1":{
+            "model":"undergroundmod:block/decompmachine/blockdecomp_machine1",
+            "y":270
+        },
+        "facing=west,lit=true,progress=2":{
+            "model":"undergroundmod:block/decompmachine/blockdecomp_machine2",
+            "y":270
+        },
+        "facing=west,lit=true,progress=3":{
+            "model":"undergroundmod:block/decompmachine/blockdecomp_machine3",
+            "y":270
+        },
+        
+        "facing=east,lit=true,progress=0":{
+            "model":"undergroundmod:block/decompmachine/blockdecomp_machine",
+            "y":90
+        },
+        "facing=east,lit=true,progress=1":{
+            "model":"undergroundmod:block/decompmachine/blockdecomp_machine1",
+            "y":90
+        },
+        "facing=east,lit=true,progress=2":{
+            "model":"undergroundmod:block/decompmachine/blockdecomp_machine2",
+            "y":90
+        },
+        "facing=east,lit=true,progress=3":{
+            "model":"undergroundmod:block/decompmachine/blockdecomp_machine3",
+            "y":90
+        },
+        
+        
+        
+        
+        "facing=north,lit=false":{
+            "model":"undergroundmod:block/decompmachine/blockdecomp_machine_nonpower"
+        },
+        "facing=south,lit=false":{
+            "model":"undergroundmod:block/decompmachine/blockdecomp_machine_nonpower",
+            "y":180
+        },
+        "facing=west,lit=false":{
+            "model":"undergroundmod:block/decompmachine/blockdecomp_machine_nonpower",
+            "y":270
+        },
+        "facing=east,lit=false":{
+            "model":"undergroundmod:block/decompmachine/blockdecomp_machine_nonpower",
             "y":90
         }
     }

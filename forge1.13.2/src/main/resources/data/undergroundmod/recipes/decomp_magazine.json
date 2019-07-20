@@ -1,0 +1,11 @@
+{
+  "type": "undergroundmod:decomp",
+  "ingredient": {
+    "item":"undergroundmod:magazine"
+  },
+  "result": {
+    "item": "minecraft:iron_ingot",
+    "count":2
+  },
+  "cookingtime":50
+}

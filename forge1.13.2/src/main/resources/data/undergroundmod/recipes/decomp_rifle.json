@@ -4,13 +4,15 @@
     "item":"undergroundmod:automaticrifle"
   },
   "result": {
-    "item": "minecraft:oak_log",
+    "item": "minecraft:oak_planks",
     "count":2
   },
   "experience":0.7,
-  "cookingtime":150,
+  "cookingtime":200,
   "moreresult":[
   	{"item":"minecraft:iron_block",
-  	 "count":3}
+  	 "count":1},
+  	 {"item":"minecraft:iron_ingot",
+  	 "count":6}
   ]
 }
