@@ -3,19 +3,27 @@ package com.underground.undergroundmod.tileentity;
 import com.underground.undergroundmod.UnderGroundMod;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.ItemStackHelper;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraftforge.items.ItemStackHandler;
+import net.minecraft.util.text.TextComponentTranslation;
 
-public class TileEntityGenerator extends TileEntity implements ISidedInventory{
+public class TileEntityGenerator extends TileEntity implements ISidedInventory,ITickable{
 
 	private NonNullList<ItemStack> generatorItemStacks = NonNullList.withSize(1, ItemStack.EMPTY);
+	private ITextComponent generatorCustomName;
+	
+	private static final int[] SLOTS_TOP = new int[]{0};
+	private static final int[] SLOTS_BOTTOM = new int[]{2, 1};
+	private static final int[] SLOTS_SIDES = new int[]{1};
 
 	public TileEntityGenerator(TileEntityType<?> tileEntityTypeIn) {
 		super(tileEntityTypeIn);
@@ -73,13 +81,17 @@ public class TileEntityGenerator extends TileEntity implements ISidedInventory{
 	@Override
 	public int getInventoryStackLimit() {
 		// TODO 自動生成されたメソッド・スタブ
-		return 0;
+		return 64;
 	}
 
 	@Override
 	public boolean isUsableByPlayer(EntityPlayer player) {
 		// TODO 自動生成されたメソッド・スタブ
-		return false;
+		if(this.world.getTileEntity(this.pos)!=this) {
+			return false;
+		}else {
+			return !(player.getDistanceSq((double)this.pos.getX() + 0.5D, (double)this.pos.getY() + 0.5D, (double)this.pos.getZ() + 0.5D) > 64.0D);
+		}
 	}
 
 	@Override
@@ -121,45 +133,60 @@ public class TileEntityGenerator extends TileEntity implements ISidedInventory{
 	@Override
 	public void clear() {
 		// TODO 自動生成されたメソッド・スタブ
-
+		this.generatorItemStacks.clear();
 	}
 
 	@Override
 	public ITextComponent getName() {
 		// TODO 自動生成されたメソッド・スタブ
-		return null;
+		return (ITextComponent)(this.generatorCustomName != null ? this.generatorCustomName : new TextComponentTranslation("GENERATOR"));
 	}
 
 	@Override
 	public boolean hasCustomName() {
 		// TODO 自動生成されたメソッド・スタブ
-		return false;
+		return this.generatorCustomName !=null;
 	}
 
 	@Override
 	public ITextComponent getCustomName() {
 		// TODO 自動生成されたメソッド・スタブ
-		return null;
+		return this.generatorCustomName;
 	}
 
 	@Override
 	public int[] getSlotsForFace(EnumFacing side) {
-		// TODO 自動生成されたメソッド・スタブ
-		return null;
+		if(side == EnumFacing.DOWN) {
+			return SLOTS_BOTTOM;
+		}else {
+			return side == EnumFacing.UP ? SLOTS_TOP : SLOTS_SIDES;
+		}
 	}
 
 	@Override
 	public boolean canInsertItem(int index, ItemStack itemStackIn,
 			EnumFacing direction) {
 		// TODO 自動生成されたメソッド・スタブ
-		return false;
+		return this.isItemValidForSlot(index, itemStackIn);
 	}
 
 	@Override
 	public boolean canExtractItem(int index, ItemStack stack,
 			EnumFacing direction) {
 		// TODO 自動生成されたメソッド・スタブ
-		return false;
+		if(direction == EnumFacing.DOWN && index ==1) {
+			Item item =stack.getItem();
+			if(item != Items.WATER_BUCKET && item != Items.BUCKET) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	@Override
+	public void tick() {
+		// TODO 自動生成されたメソッド・スタブ
+		
 	}
 
 }

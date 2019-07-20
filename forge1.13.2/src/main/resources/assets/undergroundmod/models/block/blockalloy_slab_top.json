@@ -1,0 +1,8 @@
+{
+    "parent": "block/slab_top",
+    "textures": {
+        "bottom": "undergroundmod:blocks/blockalloy",
+        "top": "undergroundmod:blocks/blockalloy",
+        "side": "undergroundmod:blocks/blockalloy"
+    }
+}
