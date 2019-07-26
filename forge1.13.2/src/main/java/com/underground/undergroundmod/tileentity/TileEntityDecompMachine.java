@@ -83,6 +83,7 @@ public class TileEntityDecompMachine extends TileEntity implements ISidedInvento
 	private int currentItemBurnTime;
 	private int cookTime;
 	private int totalCookTime;
+	private TileEntityGenerator tileEntityGenerator;
 
 	public TileEntityDecompMachine(TileEntityType<?> tileEntityTypeIn) {
 		super(tileEntityTypeIn);
@@ -144,6 +145,7 @@ public class TileEntityDecompMachine extends TileEntity implements ISidedInvento
 				if(this.isPowerIn() && this.canDecomp(irecipe)) {
 					if(isOutPutSlotCanInsert(irecipe)) {
 						++this.cookTime;
+						this.tileEntityGenerator.powerSetDamage(20);
 						this.world.setBlockState(this.pos, this.world.getBlockState(this.pos).with(BlockDecompMachine.PROGRESS, Integer.valueOf(getProgress())));
 						int test = getProgress();
 						if(this.cookTime == this.totalCookTime) {
@@ -212,9 +214,12 @@ public class TileEntityDecompMachine extends TileEntity implements ISidedInvento
 			}
 			IBlockState bs = this.world.getBlockState(nextpos);
 			if(bs.getBlock() == UnderGroundMod.BlockGenerator) {
-				return true;
+				TileEntityGenerator tg = (TileEntityGenerator) world.getTileEntity(nextpos);
+				this.tileEntityGenerator = tg;
+				return tg.isPowerOn();
 			}
 		}
+		this.tileEntityGenerator = null;
 		return false;
 	}
 

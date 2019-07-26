@@ -1,5 +1,6 @@
 package com.underground.undergroundmod.tileentity;
 
+import com.underground.undergroundmod.Debug;
 import com.underground.undergroundmod.UnderGroundMod;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -8,6 +9,7 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.EnumFacing;
@@ -18,12 +20,16 @@ import net.minecraft.util.text.TextComponentTranslation;
 
 public class TileEntityGenerator extends TileEntity implements ISidedInventory,ITickable{
 
-	private NonNullList<ItemStack> generatorItemStacks = NonNullList.withSize(1, ItemStack.EMPTY);
+	private NonNullList<ItemStack> generatorItemStacks = NonNullList.withSize(2, ItemStack.EMPTY);
 	private ITextComponent generatorCustomName;
-	
+
 	private static final int[] SLOTS_TOP = new int[]{0};
 	private static final int[] SLOTS_BOTTOM = new int[]{2, 1};
 	private static final int[] SLOTS_SIDES = new int[]{1};
+
+	private int PowerLevel;
+	private int PowerMassage;
+	private int PowerCount;
 
 	public TileEntityGenerator(TileEntityType<?> tileEntityTypeIn) {
 		super(tileEntityTypeIn);
@@ -32,6 +38,63 @@ public class TileEntityGenerator extends TileEntity implements ISidedInventory,I
 
 	public TileEntityGenerator() {
 		super(UnderGroundMod.TileEntityGenerator);
+	}
+
+	@Override
+	public void tick() {
+		// TODO 自動生成されたメソッド・スタブ
+		ItemStack itemstack = generatorItemStacks.get(0);
+		if(itemstack.getItem() == UnderGroundMod.PowerCell) {
+			this.PowerLevel = itemstack.getDamage();
+			this.PowerMassage = 1;
+		}else if(generatorItemStacks.get(0).isEmpty()){
+			this.PowerLevel = 0;
+			this.PowerMassage = 0;
+		}
+	}
+
+	public boolean isPowerOn() {
+		return !generatorItemStacks.get(0).isEmpty();
+	}
+
+	public void powerSetDamage(int count) {
+		ItemStack itemstack = generatorItemStacks.get(0);
+			if(PowerCount > count) {
+				itemstack.setDamage(itemstack.getDamage() + 1);
+				PowerCount = 0;
+			}else {
+				PowerCount++;
+			}
+
+		
+		if(itemstack.getDamage() > itemstack.getMaxDamage()) {
+			generatorItemStacks.set(0, ItemStack.EMPTY);
+		}
+	}
+
+	public void debug() {
+		Debug.text(generatorItemStacks.get(0).toString());
+	}
+
+	@Override
+	public NBTTagCompound write(NBTTagCompound compound) {
+		// TODO 自動生成されたメソッド・スタブ
+		super.write(compound);
+		ItemStackHelper.saveAllItems(compound, this.generatorItemStacks);
+		compound.setInt("PowerLevel", this.PowerLevel);
+		compound.setInt("PowerMassage", this.PowerMassage);
+
+		return compound;
+	}
+
+	@Override
+	public void read(NBTTagCompound compound) {
+		// TODO 自動生成されたメソッド・スタブ
+		super.read(compound);
+		this.generatorItemStacks = NonNullList.withSize(this.getSizeInventory(), ItemStack.EMPTY);
+		ItemStackHelper.loadAllItems(compound, this.generatorItemStacks);
+		this.PowerLevel = compound.getInt("PowerLevel");
+		this.PowerMassage = compound.getInt("PowerMassage");
 	}
 
 	@Override
@@ -76,6 +139,7 @@ public class TileEntityGenerator extends TileEntity implements ISidedInventory,I
 		if(stack.getCount()>this.getInventoryStackLimit()) {
 			stack.setCount(this.getInventoryStackLimit());
 		}
+		this.markDirty();
 	}
 
 	@Override
@@ -115,19 +179,33 @@ public class TileEntityGenerator extends TileEntity implements ISidedInventory,I
 	@Override
 	public int getField(int id) {
 		// TODO 自動生成されたメソッド・スタブ
-		return 0;
+		switch (id) {
+			case 0:
+				return this.PowerLevel;
+			case 1:
+				return this.PowerMassage;
+			default :
+				return 0;
+		}
 	}
 
 	@Override
 	public void setField(int id, int value) {
 		// TODO 自動生成されたメソッド・スタブ
+		switch (id) {
+			case 0:
+				this.PowerLevel = value;
+				break;
+			case 1:
+				this.PowerMassage = value;
+		}
 
 	}
 
 	@Override
 	public int getFieldCount() {
 		// TODO 自動生成されたメソッド・スタブ
-		return 0;
+		return 2;
 	}
 
 	@Override
@@ -183,10 +261,5 @@ public class TileEntityGenerator extends TileEntity implements ISidedInventory,I
 		return true;
 	}
 
-	@Override
-	public void tick() {
-		// TODO 自動生成されたメソッド・スタブ
-		
-	}
 
 }

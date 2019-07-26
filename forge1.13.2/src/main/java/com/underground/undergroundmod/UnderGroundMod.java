@@ -73,6 +73,7 @@ import com.underground.undergroundmod.block.*;
 import com.underground.undergroundmod.entity.*;
 import com.underground.undergroundmod.tileentity.*;
 import com.underground.undergroundmod.tileentity.gui.GuiDecompMachine;
+import com.underground.undergroundmod.tileentity.gui.GuiGenerator;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -113,6 +114,13 @@ public class UnderGroundMod
         			TileEntity tile = player.world.getTileEntity(pos);
         			if(tile instanceof TileEntityDecompMachine) {
         				return new GuiDecompMachine(player.inventory, (TileEntityDecompMachine) tile);
+        			}
+        		}else if(location.toString().equals(ModIdHolder.MODID + ":generatorgui")) {
+        			EntityPlayerSP player = Minecraft.getInstance().player;
+        			BlockPos pos = OpenContainer.getAdditionalData().readBlockPos();
+        			TileEntity tile = player.world.getTileEntity(pos);
+        			if(tile instanceof TileEntityGenerator) {
+        				return new GuiGenerator(player.inventory, (TileEntityGenerator)tile);
         			}
         		}
         		return null;
@@ -325,7 +333,8 @@ public class UnderGroundMod
         @SubscribeEvent
         public static void onTileEntityRegistry(final RegistryEvent.Register<TileEntityType<?>> evt) {
         	evt.getRegistry().registerAll(
-        			TileEntityDecompMachine
+        			TileEntityDecompMachine,
+        			TileEntityGenerator
         			);
         }
         
