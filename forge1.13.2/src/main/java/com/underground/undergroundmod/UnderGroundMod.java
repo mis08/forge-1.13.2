@@ -151,6 +151,7 @@ public class UnderGroundMod
 	//TileEntity作成
 	public static TileEntityType<?> TileEntityDecompMachine = TileEntityType.Builder.create(TileEntityDecompMachine::new).build(null).setRegistryName(MODID,"decompmachine");
 	public static TileEntityType<?> TileEntityGenerator =  TileEntityType.Builder.create(TileEntityGenerator::new).build(null).setRegistryName(MODID,"generator");
+	public static TileEntityType<?> TileEntityPowerWire = TileEntityType.Builder.create(TileEntityPowerWire::new).build(null).setRegistryName(MODID,"powerwire");
 	
     
     //Itemプロパティ作成
@@ -182,6 +183,7 @@ public class UnderGroundMod
     public static Block BlockAlloy_Stairs = new BlockAlloy_stairs(block.getDefaultState(),Block.Properties.from(block)).setRegistryName(MODID,"blockalloy_stairs");
     public static Block BlockAlloy_Slab = new BlockAlloy_Slab(Block.Properties.from(block)).setRegistryName(MODID,"blockalloy_slab");
     public static Block BlockTritium_Lamp = new BlockTritium_lamp(Block.Properties.from(block).lightValue(15)).setRegistryName(MODID,"blocktritium_lamp");
+    public static Block BlockPowerWire = new BlockPowerWire(Block.Properties.from(block)).setRegistryName(MODID,"block_powerwire");
     
     //Entityドロップ変更
 	public static final ResourceLocation ENTITIES_SKYROAMER = LootTableList.register(new ResourceLocation(ModIdHolder.MODID,"inject/skyroamer"));
@@ -265,7 +267,8 @@ public class UnderGroundMod
         			BlockGenerator,
         			BlockAlloy_Stairs,
         			BlockAlloy_Slab,
-        			BlockTritium_Lamp
+        			BlockTritium_Lamp,
+        			BlockPowerWire
         			);
         	
             LOGGER.info("HELLO from Register Block");
@@ -293,6 +296,7 @@ public class UnderGroundMod
         			Block2Item.set(BlockAlloy_Stairs),
         			Block2Item.set(BlockAlloy_Slab),
         			Block2Item.set(BlockTritium_Lamp),
+        			Block2Item.set(BlockPowerWire),
         			Wrench,
         			LaserGun,
         			PowerCell,
@@ -334,7 +338,8 @@ public class UnderGroundMod
         public static void onTileEntityRegistry(final RegistryEvent.Register<TileEntityType<?>> evt) {
         	evt.getRegistry().registerAll(
         			TileEntityDecompMachine,
-        			TileEntityGenerator
+        			TileEntityGenerator,
+        			TileEntityPowerWire
         			);
         }
         

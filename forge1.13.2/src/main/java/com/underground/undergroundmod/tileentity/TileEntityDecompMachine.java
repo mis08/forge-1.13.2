@@ -143,9 +143,10 @@ public class TileEntityDecompMachine extends TileEntity implements ISidedInvento
 
 
 				if(this.isPowerIn() && this.canDecomp(irecipe)) {
-					if(isOutPutSlotCanInsert(irecipe)) {
+					if(isOutPutSlotCanInsert(irecipe) && this.tileEntityGenerator != null) {
 						++this.cookTime;
 						this.tileEntityGenerator.powerSetDamage(20);
+
 						this.world.setBlockState(this.pos, this.world.getBlockState(this.pos).with(BlockDecompMachine.PROGRESS, Integer.valueOf(getProgress())));
 						int test = getProgress();
 						if(this.cookTime == this.totalCookTime) {
@@ -164,19 +165,19 @@ public class TileEntityDecompMachine extends TileEntity implements ISidedInvento
 
 		}
 
-		if(isPowerIn()) {
+		if(isPowerIn() && this.tileEntityGenerator.isPowerOn()) {
 			this.world.setBlockState(this.pos, this.world.getBlockState(this.pos).with(BlockDecompMachine.POWER, Boolean.valueOf(true)),3);
 		}else {
 			this.world.setBlockState(this.pos, this.world.getBlockState(this.pos).with(BlockDecompMachine.POWER, Boolean.valueOf(false)),3);
 		}
-		
-		
-		
+
+
+
 		if(flag1) {
 			this.markDirty();
 		}
 	}
-	
+
 	public int getProgress() {
 		int split = this.totalCookTime/2;
 		if(this.cookTime > this.totalCookTime-this.totalCookTime/10) {
@@ -193,30 +194,37 @@ public class TileEntityDecompMachine extends TileEntity implements ISidedInvento
 		for(int i = 0; i<6; ++i) {
 			BlockPos nextpos =null;
 			switch(i) {
-				case 0:
-					nextpos = new BlockPos(this.pos.getX()+1, this.pos.getY(), this.pos.getZ());
-					break;
-				case 1:
-					nextpos = new BlockPos(this.pos.getX(), this.pos.getY()+1, this.pos.getZ());
-					break;
-				case 2:
-					nextpos = new BlockPos(this.pos.getX(), this.pos.getY(), this.pos.getZ()+1);
-					break;
-				case 3:
-					nextpos = new BlockPos(this.pos.getX()-1, this.pos.getY(), this.pos.getZ());
-					break;
-				case 4:
-					nextpos = new BlockPos(this.pos.getX(), this.pos.getY()-1, this.pos.getZ());
-					break;
-				case 5:
-					nextpos = new BlockPos(this.pos.getX(), this.pos.getY(), this.pos.getZ()-1);
-					break;
+			case 0:
+				nextpos = new BlockPos(this.pos.getX()+1, this.pos.getY(), this.pos.getZ());
+				break;
+			case 1:
+				nextpos = new BlockPos(this.pos.getX(), this.pos.getY()+1, this.pos.getZ());
+				break;
+			case 2:
+				nextpos = new BlockPos(this.pos.getX(), this.pos.getY(), this.pos.getZ()+1);
+				break;
+			case 3:
+				nextpos = new BlockPos(this.pos.getX()-1, this.pos.getY(), this.pos.getZ());
+				break;
+			case 4:
+				nextpos = new BlockPos(this.pos.getX(), this.pos.getY()-1, this.pos.getZ());
+				break;
+			case 5:
+				nextpos = new BlockPos(this.pos.getX(), this.pos.getY(), this.pos.getZ()-1);
+				break;
 			}
 			IBlockState bs = this.world.getBlockState(nextpos);
 			if(bs.getBlock() == UnderGroundMod.BlockGenerator) {
 				TileEntityGenerator tg = (TileEntityGenerator) world.getTileEntity(nextpos);
 				this.tileEntityGenerator = tg;
 				return tg.isPowerOn();
+			}else if(bs.getBlock() == UnderGroundMod.BlockPowerWire) {
+				TileEntityPowerWire pw = (TileEntityPowerWire) world.getTileEntity(nextpos);
+				if(pw.getGenerator() != null) {
+					this.tileEntityGenerator = pw.getGenerator();
+				}
+				if(pw.getPower() && pw.getGenerator().isPowerOn())
+				return true;
 			}
 		}
 		this.tileEntityGenerator = null;
@@ -435,16 +443,16 @@ public class TileEntityDecompMachine extends TileEntity implements ISidedInvento
 	public int getField(int id) {
 		// TODO 自動生成されたメソッド・スタブ
 		switch(id) {
-			case 0:
-				return this.DecompBurnTime;
-			case 1:
-				return this.currentItemBurnTime;
-			case 2:
-				return this.cookTime;
-			case 3:
-				return this.totalCookTime;
-			default:
-				return 0;
+		case 0:
+			return this.DecompBurnTime;
+		case 1:
+			return this.currentItemBurnTime;
+		case 2:
+			return this.cookTime;
+		case 3:
+			return this.totalCookTime;
+		default:
+			return 0;
 		}
 	}
 
@@ -452,17 +460,17 @@ public class TileEntityDecompMachine extends TileEntity implements ISidedInvento
 	public void setField(int id, int value) {
 		// TODO 自動生成されたメソッド・スタブ
 		switch(id) {
-			case 0:
-				this.DecompBurnTime = value;
-				break;
-			case 1:
-				this.currentItemBurnTime = value;
-				break;
-			case 2:
-				this.cookTime = value;
-				break;
-			case 3:
-				this.totalCookTime = value;
+		case 0:
+			this.DecompBurnTime = value;
+			break;
+		case 1:
+			this.currentItemBurnTime = value;
+			break;
+		case 2:
+			this.cookTime = value;
+			break;
+		case 3:
+			this.totalCookTime = value;
 		}
 
 	}

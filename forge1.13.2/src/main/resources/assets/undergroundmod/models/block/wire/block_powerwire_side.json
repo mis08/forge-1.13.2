@@ -1,0 +1,21 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"0": "undergroundmod:blocks/wire/wireside",
+		"particle": "undergroundmod:blocks/wire/wireside"
+	},
+	"elements": [
+		{
+			"from": [5, 2, 0],
+			"to": [11, 8, 6],
+			"faces": {
+				"north": {"uv": [0, 0, 3, 3], "texture": "#0"},
+				"east": {"uv": [3, 0, 6, 3], "texture": "#0"},
+				"south": {"uv": [0, 0, 3, 3], "texture": "#0"},
+				"west": {"uv": [3, 0, 6, 3], "texture": "#0"},
+				"up": {"uv": [3, 0, 6, 3], "texture": "#0"},
+				"down": {"uv": [3, 0, 6, 3], "texture": "#0"}
+			}
+		}
+	]
+}

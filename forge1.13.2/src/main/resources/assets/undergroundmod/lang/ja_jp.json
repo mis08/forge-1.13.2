@@ -20,5 +20,10 @@
   "block.undergroundmod.blockalloy":"合金ブロック",
   "block.undergroundmod.blockalloy_door":"合金ドア",
   "block.undergroundmod.blocktempered_glass":"強化ガラス",
-  "block.undergroundmod.blockdecomp_machine":"DECOMP MACHINE"
+  "block.undergroundmod.blockdecomp_machine":"DECOMP MACHINE",
+  "block.undergroundmod.blockalloy_slab":"合金ハーフブロック",
+  "block.undergroundmod.block_generator":"GENERATOR",
+  "block.undergroundmod.blockalloy_stairs":"合金階段",
+  "block.undergroundmod.blocktritium_lamp":"トリチウムランプ",
+  "block.undergroundmod.block_powerwire":"Power Wire"
 }

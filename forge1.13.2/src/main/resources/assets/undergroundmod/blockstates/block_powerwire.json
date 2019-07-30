@@ -1,0 +1,23 @@
+{
+    "multipart": [
+        {   "apply":{"model": "undergroundmod:block/wire/block_powerwire"}},
+        {   "when": { "north": true },
+            "apply": { "model": "undergroundmod:block/wire/block_powerwire_side" }
+        },
+        {   "when": { "east": true },
+            "apply": { "model": "undergroundmod:block/wire/block_powerwire_side", "y": 90, "uvlock": false }
+        },
+        {   "when": { "south": true },
+            "apply": { "model": "undergroundmod:block/wire/block_powerwire_side", "y": 180, "uvlock": false }
+        },
+        {   "when": { "west": true },
+            "apply": { "model": "undergroundmod:block/wire/block_powerwire_side", "y": 270, "uvlock": false }
+        },
+        {   "when": { "up": true },
+            "apply": { "model": "undergroundmod:block/wire/block_powerwire_top","uvlock": false }
+        },
+        {   "when": { "down": true },
+            "apply": { "model": "undergroundmod:block/wire/block_powerwire_down","uvlock": false }
+        }
+        ]
+}
