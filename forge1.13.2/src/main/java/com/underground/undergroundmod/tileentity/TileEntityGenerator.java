@@ -1,8 +1,15 @@
 package com.underground.undergroundmod.tileentity;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import com.mojang.datafixers.types.templates.List;
 import com.underground.undergroundmod.Debug;
 import com.underground.undergroundmod.UnderGroundMod;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.ISidedInventory;
@@ -15,6 +22,7 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 
@@ -30,7 +38,7 @@ public class TileEntityGenerator extends TileEntity implements ISidedInventory,I
 	private int PowerLevel;
 	private int PowerMassage;
 	private int PowerCount;
-
+	private java.util.List<BlockPos> conectList = new ArrayList<BlockPos>();
 	public TileEntityGenerator(TileEntityType<?> tileEntityTypeIn) {
 		super(tileEntityTypeIn);
 		// TODO 自動生成されたコンストラクター・スタブ
@@ -50,6 +58,73 @@ public class TileEntityGenerator extends TileEntity implements ISidedInventory,I
 		}else if(generatorItemStacks.get(0).isEmpty()){
 			this.PowerLevel = 0;
 			this.PowerMassage = 0;
+		}
+		
+		this.serchConecter();
+		this.sendPower();
+		
+		
+	}
+	
+	public void serchConecter() {
+		for(int i = 0; i<6; ++i) {
+			BlockPos nextpos =null;
+			switch(i) {
+			case 0:
+				nextpos = new BlockPos(this.pos.getX()+1, this.pos.getY(), this.pos.getZ());
+				break;
+			case 1:
+				nextpos = new BlockPos(this.pos.getX(), this.pos.getY()+1, this.pos.getZ());
+				break;
+			case 2:
+				nextpos = new BlockPos(this.pos.getX(), this.pos.getY(), this.pos.getZ()+1);
+				break;
+			case 3:
+				nextpos = new BlockPos(this.pos.getX()-1, this.pos.getY(), this.pos.getZ());
+				break;
+			case 4:
+				nextpos = new BlockPos(this.pos.getX(), this.pos.getY()-1, this.pos.getZ());
+				break;
+			case 5:
+				nextpos = new BlockPos(this.pos.getX(), this.pos.getY(), this.pos.getZ()-1);
+				break;
+			}
+			IBlockState bs = this.world.getBlockState(nextpos);
+			if(bs.getBlock() == UnderGroundMod.BlockPowerWire) {
+				if(!conectList.contains(nextpos)) {
+					conectList.add(nextpos);
+				}
+			}
+		}
+
+	}
+	
+	public boolean isRecivershasPower(int powerLevel) {
+		this.serchNullConection();
+		for(Iterator<BlockPos> it = this.conectList.iterator(); it.hasNext();) {
+			TileEntityPowerWire pw = (TileEntityPowerWire) this.world.getTileEntity(it.next());
+			if(pw.getPower() > powerLevel){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public void serchNullConection() {
+		for(Iterator<BlockPos> it = this.conectList.iterator(); it.hasNext();) {
+			if(this.world.getBlockState(it.next()).getBlock() != UnderGroundMod.BlockPowerWire ) {
+				it.remove();
+			}
+		}
+	}
+	
+	public void sendPower() {
+		if(!isRecivershasPower(50)) {
+			for(Iterator<BlockPos> it = this.conectList.iterator(); it.hasNext();) {
+				TileEntityPowerWire pw = (TileEntityPowerWire) this.world.getTileEntity(it.next());
+				pw.addPower(20);
+				this.powerSetDamage(20);
+			}
 		}
 	}
 
@@ -71,6 +146,7 @@ public class TileEntityGenerator extends TileEntity implements ISidedInventory,I
 			generatorItemStacks.set(0, ItemStack.EMPTY);
 		}
 	}
+	
 
 	public void debug() {
 		Debug.text(generatorItemStacks.get(0).toString());

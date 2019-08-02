@@ -1,9 +1,10 @@
 package com.underground.undergroundmod.tileentity;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-import com.google.common.hash.BloomFilter;
-import com.mojang.datafixers.types.templates.List;
+import com.underground.undergroundmod.Debug;
 import com.underground.undergroundmod.UnderGroundMod;
 import com.underground.undergroundmod.block.BlockPowerWire;
 
@@ -15,9 +16,7 @@ import net.minecraft.util.math.BlockPos;
 
 public class TileEntityPowerWire extends TileEntity implements ITickable{
 
-	private boolean hasPower;
-
-	private TileEntityGenerator tileentitygenerator;
+	private List<BlockPos> conectList = new ArrayList<>();
 
 	public TileEntityPowerWire(TileEntityType<?> tileEntityTypeIn) {
 		super(tileEntityTypeIn);
@@ -30,14 +29,54 @@ public class TileEntityPowerWire extends TileEntity implements ITickable{
 
 	@Override
 	public void tick() {
-		if(isPowerIn()) {
-			this.hasPower = true;
-		}else {
-			this.hasPower = false;
-		}
+		this.addMySelfPos();
+		this.serchPowerSorce();
 		this.serchWire();
+		
 	}
 
+
+	public void serchPowerSorce() {
+		for(int i = 0; i<6; ++i) {
+			BlockPos nextpos =null;
+			switch(i) {
+			case 0:
+				nextpos = new BlockPos(this.pos.getX()+1, this.pos.getY(), this.pos.getZ());
+				break;
+			case 1:
+				nextpos = new BlockPos(this.pos.getX(), this.pos.getY()+1, this.pos.getZ());
+				break;
+			case 2:
+				nextpos = new BlockPos(this.pos.getX(), this.pos.getY(), this.pos.getZ()+1);
+				break;
+			case 3:
+				nextpos = new BlockPos(this.pos.getX()-1, this.pos.getY(), this.pos.getZ());
+				break;
+			case 4:
+				nextpos = new BlockPos(this.pos.getX(), this.pos.getY()-1, this.pos.getZ());
+				break;
+			case 5:
+				nextpos = new BlockPos(this.pos.getX(), this.pos.getY(), this.pos.getZ()-1);
+				break;
+			}
+			IBlockState bs = this.world.getBlockState(nextpos);
+			if(bs.getBlock() == UnderGroundMod.BlockPowerWire) {
+				TileEntityPowerWire pw = (TileEntityPowerWire) world.getTileEntity(nextpos);
+				if(!this.conectList.contains(nextpos)) {
+					this.conectList.add(nextpos);
+					pw.addPower4newWire(nextpos, this.getPower());
+				}
+				this.setConectList(pw);
+				if(pw.getPower() < this.getPower()) {
+					this.world.getBlockState(nextpos).with(BlockPowerWire.POWER, this.getPower());
+				}
+			}
+		}
+
+	}
+
+
+	//接続可能なブロックを探す
 	public void serchWire() {
 		for(int i = 0; i<6; ++i) {
 			BlockPos nextpos =null;
@@ -71,53 +110,7 @@ public class TileEntityPowerWire extends TileEntity implements ITickable{
 
 	}
 
-	public boolean isPowerIn() {
-		for(int i = 0; i<6; ++i) {
-			BlockPos nextpos =null;
-			switch(i) {
-			case 0:
-				nextpos = new BlockPos(this.pos.getX()+1, this.pos.getY(), this.pos.getZ());
-				break;
-			case 1:
-				nextpos = new BlockPos(this.pos.getX(), this.pos.getY()+1, this.pos.getZ());
-				break;
-			case 2:
-				nextpos = new BlockPos(this.pos.getX(), this.pos.getY(), this.pos.getZ()+1);
-				break;
-			case 3:
-				nextpos = new BlockPos(this.pos.getX()-1, this.pos.getY(), this.pos.getZ());
-				break;
-			case 4:
-				nextpos = new BlockPos(this.pos.getX(), this.pos.getY()-1, this.pos.getZ());
-				break;
-			case 5:
-				nextpos = new BlockPos(this.pos.getX(), this.pos.getY(), this.pos.getZ()-1);
-				break;
-			}
-			IBlockState bs = this.world.getBlockState(nextpos);
-			if(bs.getBlock() == UnderGroundMod.BlockGenerator) {
-				TileEntityGenerator tg = (TileEntityGenerator) world.getTileEntity(nextpos);
-				this.tileentitygenerator = tg;
-				if(tg.isPowerOn()) {
-					return true;
-				}
-			}else if(bs.getBlock() == UnderGroundMod.BlockPowerWire) {
-				TileEntityPowerWire pw = (TileEntityPowerWire) world.getTileEntity(nextpos);
-				if(pw.getGenerator() != null) {
-					this.tileentitygenerator = pw.getGenerator();
-				}
-				
-				if(pw.getPower() && pw.getGenerator().isPowerOn()) {
-					return true;
-				}
-			}
-		}
-
-		this.tileentitygenerator = null;
-		this.hasPower =false;
-		return false;
-	}
-
+	//指定されたブロックにくっつく
 	public void setSideWire(int i,boolean flag) {
 		switch(i) {
 		case 0:
@@ -140,13 +133,77 @@ public class TileEntityPowerWire extends TileEntity implements ITickable{
 		}
 	}
 
-	public boolean getPower() {
-		return hasPower;
+
+
+	public void addPower(int power) {
+		this.serchNullConection();
+//		this.addPowerB(power);
+//		this.conectList.add(this.pos);
+		for(Iterator<BlockPos> it = this.conectList.iterator(); it.hasNext();) {
+			TileEntityPowerWire pw =(TileEntityPowerWire) this.world.getTileEntity(it.next());
+			pw.addPowerB(power);
+		}
+	}
+
+	public void addPowerB(int power) {
+		Integer in = this.getPower() + power;
+		this.world.setBlockState(this.pos, this.world.getBlockState(this.pos).with(BlockPowerWire.POWER, in < 100 ? in : 100));
 	}
 
 
-	public TileEntityGenerator getGenerator() {
-		return this.tileentitygenerator;
+
+	public void usePower(int power) {
+		this.serchNullConection();
+//		this.usePowerB(power);
+//		this.conectList.add(this.pos);
+		for(Iterator<BlockPos> it = this.conectList.iterator(); it.hasNext();) {
+			TileEntityPowerWire pw =(TileEntityPowerWire) this.world.getTileEntity(it.next());
+			pw.usePowerB(power);
+		}
+
 	}
+
+	//usePowerのためのパーツ
+	public void usePowerB(int power) {
+		Integer in = this.getPower() - power;
+		this.world.setBlockState(this.pos, this.world.getBlockState(this.pos).with(BlockPowerWire.POWER, in > 0 ? in : 0));
+	}
+
+	public int getPower() {
+		return this.world.getBlockState(this.pos).get(BlockPowerWire.POWER);
+	}
+
+	public void setConectList(TileEntityPowerWire pw) {
+		for(Iterator<BlockPos> it = pw.conectList.iterator(); it.hasNext();) {
+			BlockPos blockpos = it.next();
+			if(!this.conectList.contains(blockpos)) {
+				this.conectList.add(blockpos);
+			}
+		}
+	}
+
+	public void serchNullConection() {
+		for(Iterator<BlockPos> it = this.conectList.iterator(); it.hasNext();) {
+			BlockPos bs = it.next();
+			if(this.world.getBlockState(bs).getBlock() != UnderGroundMod.BlockPowerWire ) {
+				//				if(this.world.getBlockState(it.next()).getBlock() != UnderGroundMod.BlockPowerWire ) {
+				Debug.text("kill"+bs.toString());
+				it.remove();
+			}
+		}
+	}
+
+	public void addPower4newWire(BlockPos bs,int powerLevel) {
+		TileEntityPowerWire pw = (TileEntityPowerWire) this.world.getTileEntity(bs);
+		pw.addPowerB(powerLevel);
+	}
+	
+	public void addMySelfPos() {
+		if(!this.conectList.contains(this.pos)) {
+			this.conectList.add(this.pos);
+		}
+	}
+	
+
 
 }

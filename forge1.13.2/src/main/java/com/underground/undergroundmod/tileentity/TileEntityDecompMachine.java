@@ -1,5 +1,6 @@
 package com.underground.undergroundmod.tileentity;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -83,8 +84,7 @@ public class TileEntityDecompMachine extends TileEntity implements ISidedInvento
 	private int currentItemBurnTime;
 	private int cookTime;
 	private int totalCookTime;
-	private TileEntityGenerator tileEntityGenerator;
-
+	private TileEntityPowerWire pw;
 	public TileEntityDecompMachine(TileEntityType<?> tileEntityTypeIn) {
 		super(tileEntityTypeIn);
 		// TODO 自動生成されたコンストラクター・スタブ
@@ -94,10 +94,6 @@ public class TileEntityDecompMachine extends TileEntity implements ISidedInvento
 		super(UnderGroundMod.TileEntityDecompMachine);
 	}
 
-
-	public void debug() {
-		UnderGroundMod.Debag.info("Conext TileEntity!");
-	}
 
 	public ItemStackHandler getInventory() {
 		return this.inventory;
@@ -130,6 +126,7 @@ public class TileEntityDecompMachine extends TileEntity implements ISidedInvento
 
 		boolean flag1 = false;
 
+
 		if(!this.world.isRemote) {
 
 			if(this.isPowerIn() || !this.decompItemStacks.get(0).isEmpty()) {
@@ -143,12 +140,11 @@ public class TileEntityDecompMachine extends TileEntity implements ISidedInvento
 
 
 				if(this.isPowerIn() && this.canDecomp(irecipe)) {
-					if(isOutPutSlotCanInsert(irecipe) && this.tileEntityGenerator != null) {
+					if(isOutPutSlotCanInsert(irecipe)) {
 						++this.cookTime;
-						this.tileEntityGenerator.powerSetDamage(20);
+						this.pw.usePower(2);
 
 						this.world.setBlockState(this.pos, this.world.getBlockState(this.pos).with(BlockDecompMachine.PROGRESS, Integer.valueOf(getProgress())));
-						int test = getProgress();
 						if(this.cookTime == this.totalCookTime) {
 							this.cookTime = 0;
 							this.totalCookTime = this.getCookTime();
@@ -165,7 +161,7 @@ public class TileEntityDecompMachine extends TileEntity implements ISidedInvento
 
 		}
 
-		if(isPowerIn() && this.tileEntityGenerator.isPowerOn()) {
+		if(isPowerIn()) {
 			this.world.setBlockState(this.pos, this.world.getBlockState(this.pos).with(BlockDecompMachine.POWER, Boolean.valueOf(true)),3);
 		}else {
 			this.world.setBlockState(this.pos, this.world.getBlockState(this.pos).with(BlockDecompMachine.POWER, Boolean.valueOf(false)),3);
@@ -214,20 +210,20 @@ public class TileEntityDecompMachine extends TileEntity implements ISidedInvento
 				break;
 			}
 			IBlockState bs = this.world.getBlockState(nextpos);
-			if(bs.getBlock() == UnderGroundMod.BlockGenerator) {
-				TileEntityGenerator tg = (TileEntityGenerator) world.getTileEntity(nextpos);
-				this.tileEntityGenerator = tg;
-				return tg.isPowerOn();
-			}else if(bs.getBlock() == UnderGroundMod.BlockPowerWire) {
+//			if(bs.getBlock() == UnderGroundMod.BlockGenerator) {
+//				TileEntityGenerator tg = (TileEntityGenerator) world.getTileEntity(nextpos);
+//				if(tg.isPowerOn()) {
+//					return true;
+//				}
+//			}
+			if(bs.getBlock() == UnderGroundMod.BlockPowerWire) {
 				TileEntityPowerWire pw = (TileEntityPowerWire) world.getTileEntity(nextpos);
-				if(pw.getGenerator() != null) {
-					this.tileEntityGenerator = pw.getGenerator();
+				if(pw.getPower() > 0) {
+					this.pw = pw;
+					return true;
 				}
-				if(pw.getPower() && pw.getGenerator().isPowerOn())
-				return true;
 			}
 		}
-		this.tileEntityGenerator = null;
 		return false;
 	}
 
@@ -251,6 +247,7 @@ public class TileEntityDecompMachine extends TileEntity implements ISidedInvento
 		}
 		return true;
 	}
+
 
 	private void decompItItem(@Nullable IRecipe recipe) {
 		// TODO 自動生成されたメソッド・スタブ

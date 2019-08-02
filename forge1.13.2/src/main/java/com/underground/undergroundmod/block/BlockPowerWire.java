@@ -35,12 +35,13 @@ import net.minecraftforge.common.util.ITeleporter;
 public class BlockPowerWire extends BlockSixWay implements ITileEntityProvider{
 
 	private static final Logger PRIVATE_LOGGER = LogManager.getLogger();
-
 	protected static final VoxelShape voxel = Block.makeCuboidShape(5.0D, 8.0D, 5.0D,11.0D,2.0D,11.0D);
+	
+	public static final IntegerProperty POWER = IntegerProperty.create("power", 0, 100);
 
 	public BlockPowerWire(Properties properties) {
 		super(0.3125F,properties);
-		this.setDefaultState(this.stateContainer.getBaseState().with(NORTH, Boolean.valueOf(false)).with(EAST, Boolean.valueOf(false)).with(SOUTH, Boolean.valueOf(false)).with(WEST, Boolean.valueOf(false)).with(UP, Boolean.valueOf(false)).with(DOWN, Boolean.valueOf(false)));
+		this.setDefaultState(this.stateContainer.getBaseState().with(NORTH, Boolean.valueOf(false)).with(EAST, Boolean.valueOf(false)).with(SOUTH, Boolean.valueOf(false)).with(WEST, Boolean.valueOf(false)).with(UP, Boolean.valueOf(false)).with(DOWN, Boolean.valueOf(false)).with(POWER, 0));
 
 		// TODO 自動生成されたコンストラクター・スタブ
 	}
@@ -65,7 +66,7 @@ public class BlockPowerWire extends BlockSixWay implements ITileEntityProvider{
 	}
 
 	protected void fillStateContainer(StateContainer.Builder<Block, IBlockState> builder) {
-		builder.add(NORTH, EAST, SOUTH, WEST, UP, DOWN);
+		builder.add(NORTH, EAST, SOUTH, WEST, UP, DOWN,POWER);
 	}
 
 	public void onReplaced(IBlockState state, World worldIn, BlockPos pos, IBlockState newState, boolean isMoving) {
