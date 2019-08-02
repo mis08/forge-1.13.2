@@ -137,8 +137,6 @@ public class TileEntityPowerWire extends TileEntity implements ITickable{
 
 	public void addPower(int power) {
 		this.serchNullConection();
-//		this.addPowerB(power);
-//		this.conectList.add(this.pos);
 		for(Iterator<BlockPos> it = this.conectList.iterator(); it.hasNext();) {
 			TileEntityPowerWire pw =(TileEntityPowerWire) this.world.getTileEntity(it.next());
 			pw.addPowerB(power);
@@ -154,8 +152,6 @@ public class TileEntityPowerWire extends TileEntity implements ITickable{
 
 	public void usePower(int power) {
 		this.serchNullConection();
-//		this.usePowerB(power);
-//		this.conectList.add(this.pos);
 		for(Iterator<BlockPos> it = this.conectList.iterator(); it.hasNext();) {
 			TileEntityPowerWire pw =(TileEntityPowerWire) this.world.getTileEntity(it.next());
 			pw.usePowerB(power);
@@ -186,8 +182,6 @@ public class TileEntityPowerWire extends TileEntity implements ITickable{
 		for(Iterator<BlockPos> it = this.conectList.iterator(); it.hasNext();) {
 			BlockPos bs = it.next();
 			if(this.world.getBlockState(bs).getBlock() != UnderGroundMod.BlockPowerWire ) {
-				//				if(this.world.getBlockState(it.next()).getBlock() != UnderGroundMod.BlockPowerWire ) {
-				Debug.text("kill"+bs.toString());
 				it.remove();
 			}
 		}
